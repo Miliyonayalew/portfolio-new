@@ -702,24 +702,6 @@ export default function Portfolio() {
                 </div>
               </div>
 
-              {/* Navigation Arrows */}
-              <Button
-                variant="outline"
-                size="icon"
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-background/80 backdrop-blur-sm border-primary/20 hover:bg-primary/10 hover:scale-110 transition-all duration-300"
-                onClick={prevProject}
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-background/80 backdrop-blur-sm border-primary/20 hover:bg-primary/10 hover:scale-110 transition-all duration-300"
-                onClick={nextProject}
-              >
-                <ChevronRight className="h-5 w-5" />
-              </Button>
-
               {/* Navigation Dots */}
               <div className="flex justify-center space-x-2 mt-8">
                 {Array.from({ length: Math.ceil(lazyData.PROJECTS_DATA.length / 3) }).map((_, groupIndex) => (
