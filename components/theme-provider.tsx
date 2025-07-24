@@ -22,6 +22,8 @@ export function ThemeProvider({
       defaultTheme={defaultTheme}
       enableSystem={enableSystem}
       storageKey={storageKey}
+      disableTransitionOnChange={false}
+      themes={["light", "dark", "system"]}
       {...props}
     >
       {children}
