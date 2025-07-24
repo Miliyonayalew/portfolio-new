@@ -202,6 +202,35 @@
   }
 }
 
+@keyframes blob1 {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  33% {
+    transform: translateY(-40px) scale(1.08);
+  }
+  66% {
+    transform: translateY(30px) scale(0.96);
+  }
+}
+@keyframes blob2 {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  33% {
+    transform: translateY(40px) scale(1.07);
+  }
+  66% {
+    transform: translateY(-30px) scale(0.93);
+  }
+}
+.animate-blob1 {
+  animation: blob1 12s ease-in-out infinite;
+}
+.animate-blob2 {
+  animation: blob2 14s ease-in-out infinite;
+}
+
 /* Custom scrollbar with enhanced theme support */
 ::-webkit-scrollbar {
   width: 8px;

@@ -16,12 +16,16 @@ export const metadata: Metadata = {
   generator: "Next.js",
   keywords: ["portfolio", "full stack developer", "web development", "React", "Next.js"],
   authors: [{ name: "Miliyon Ayalew" }],
-  viewport: "width=device-width, initial-scale=1",
   icons: {
     icon: '/miliyon.png',
     shortcut: '/miliyon.png',
     apple: '/miliyon.png',
   },
+}
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
 }
 
 export default function RootLayout({

@@ -98,7 +98,7 @@ export const PORTFOLIO_CONTENT = {
       "Whether you have a project in mind or just want to chat about technology, I'd love to hear from you.",
     contactInfo: {
       email: "miliayalew@gmail.com",
-      location: "Addis Ababa, Ethiopia"",
+      location: "Addis Ababa, Ethiopia",
       phone: "+251922765739",
     },
     form: {
