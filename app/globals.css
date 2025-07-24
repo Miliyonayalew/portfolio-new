@@ -53,8 +53,57 @@
   * {
     @apply border-border;
   }
+  
+  /* Enhanced root-level transitions */
+  html {
+    transition: 
+      background-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
   body {
     @apply bg-background text-foreground;
+    transition: 
+      background-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* Comprehensive theme transition support */
+  *,
+  *::before,
+  *::after {
+    transition: 
+      background-color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      border-color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      fill 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      stroke 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      filter 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      backdrop-filter 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* Preserve intentional transitions and animations */
+  [style*="transition:"],
+  .transition-none,
+  [data-radix-scroll-area-viewport],
+  .animate-spin,
+  .animate-pulse,
+  .animate-bounce {
+    transition: none !important;
+  }
+
+  /* Specific enhanced transitions for theme-related elements */
+  [data-theme],
+  [class*="bg-"],
+  [class*="text-"],
+  [class*="border-"] {
+    transition: 
+      background-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      border-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 }
 
@@ -69,6 +118,26 @@
 
   .animate-fade-in-right {
     animation: fadeInRight 0.8s ease-out forwards;
+  }
+
+  /* Enhanced theme transition utilities */
+  .theme-transition {
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .theme-transition-colors {
+    transition: 
+      background-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      border-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .theme-icon-transition {
+    transition: 
+      opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      rotate 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      scale 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 }
 
@@ -105,18 +174,20 @@
   }
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar with enhanced theme support */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
   background: hsl(var(--muted));
+  transition: background-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(to bottom, hsl(var(--primary)), hsl(var(--primary) / 0.8));
   border-radius: 4px;
+  transition: background 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -128,15 +199,18 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Gradient text selection */
+/* Gradient text selection with theme support */
 ::selection {
   background: hsl(var(--primary) / 0.3);
+  transition: background-color 0.3s ease;
 }
 
-/* Focus styles */
+/* Enhanced focus styles */
 :focus-visible {
   outline: 2px solid hsl(var(--primary));
   outline-offset: 2px;
+  border-radius: 4px;
+  transition: outline-color 0.3s ease;
 }
 
 /* Loading animation */
@@ -154,11 +228,85 @@ html {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Backdrop blur support */
+/* Enhanced backdrop blur support */
 .backdrop-blur-sm {
   backdrop-filter: blur(4px);
+  transition: backdrop-filter 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .backdrop-blur-md {
   backdrop-filter: blur(12px);
+  transition: backdrop-filter 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: 
+    transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px hsl(var(--primary) / 0.1), 0 8px 10px -6px hsl(var(--primary) / 0.1);
+}
+
+/* Button animations */
+.button-hover {
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.button-hover:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px hsl(var(--primary) / 0.15);
+}
+
+.button-hover:active {
+  transform: translateY(0);
+  transition-duration: 0.1s;
+}
+
+/* Loading states */
+.loading-shimmer {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 0%,
+    hsl(var(--muted-foreground) / 0.1) 50%,
+    hsl(var(--muted)) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Theme-specific enhancements */
+.dark {
+  color-scheme: dark;
+}
+
+:root {
+  color-scheme: light;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  html {
+    scroll-behavior: auto;
+  }
 }

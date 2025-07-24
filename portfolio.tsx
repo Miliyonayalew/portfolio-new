@@ -1,8 +1,8 @@
 "use client"
 
 import type React from "react"
-
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo, useCallback } from "react"
+import { CORE_CONTENT } from "@/constants/core-content"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -75,7 +75,7 @@ function useTypingAnimation(texts: string[], speed = 100, deleteSpeed = 50, paus
   return displayText
 }
 
-function useAnimatedCounter(end: number, duration = 2000, start = 0) {
+function useAnimatedCounter(end: number, duration = 1000, start = 0) {
   const [count, setCount] = useState(start)
   const [hasAnimated, setHasAnimated] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -85,7 +85,6 @@ function useAnimatedCounter(end: number, duration = 2000, start = 0) {
       ([entry]) => {
         if (entry.isIntersecting && !hasAnimated) {
           setHasAnimated(true)
-
           const startTime = Date.now()
           const timer = setInterval(() => {
             const elapsed = Date.now() - startTime
@@ -145,19 +144,38 @@ export default function Portfolio() {
   const [formSubmitted, setFormSubmitted] = useState(false)
   const [currentProjectIndex, setCurrentProjectIndex] = useState(0)
   const [currentTestimonialIndex, setCurrentTestimonialIndex] = useState(0)
+  
+  // Lazy-loaded data states
+  const [lazyData, setLazyData] = useState<any>(null)
+  const [isDataLoaded, setIsDataLoaded] = useState(false)
 
-  const typingTexts = ["Full-Stack Developer", "AI Enthusiast", "Problem Solver", "Software Engineer"]
-  const typedText = useTypingAnimation(typingTexts)
+  const typedText = useTypingAnimation(CORE_CONTENT.hero.typingTexts)
 
-  const projectsCompleted = useAnimatedCounter(30)
-  const clientsSatisfied = useAnimatedCounter(10)
-  const cupsOfCoffee = useAnimatedCounter(500)
-  const yearsExperience = useAnimatedCounter(4)
+  const projectsCompleted = useAnimatedCounter(30, 1000)
+  const clientsSatisfied = useAnimatedCounter(10, 1000)
+  const cupsOfCoffee = useAnimatedCounter(500, 1000)
+  const yearsExperience = useAnimatedCounter(4, 1000)
 
   const aboutSection = useIntersectionObserver(0.3)
   const skillsSection = useIntersectionObserver(0.3)
   const projectsSection = useIntersectionObserver(0.3)
   const experienceSection = useIntersectionObserver(0.3)
+
+  // Load data on component mount
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const data = await import("@/constants/lazy-data")
+        setLazyData(data)
+        setIsDataLoaded(true)
+      } catch (error) {
+        console.error('Failed to load data:', error)
+      }
+    }
+    
+    // Use setTimeout to prevent blocking initial render
+    setTimeout(loadData, 100)
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -182,236 +200,69 @@ export default function Portfolio() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  const scrollToSection = (sectionId: string) => {
+  const scrollToSection = useCallback((sectionId: string) => {
     const element = document.getElementById(sectionId)
     if (element) {
       element.scrollIntoView({ behavior: "smooth" })
     }
     setIsMenuOpen(false)
-  }
+  }, [])
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
+  const handleFormSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
     setIsFormSubmitting(true)
-
     await new Promise((resolve) => setTimeout(resolve, 2000))
-
     setIsFormSubmitting(false)
     setFormSubmitted(true)
-
     setTimeout(() => setFormSubmitted(false), 5000)
-  }
-
-  const skills = [
-    { name: "JavaScript", category: "frontend", icon: "☕️" },
-    { name: "React", category: "frontend", icon: "⚛️" },
-    { name: "Redux", category: "frontend", icon: "✨" },
-    { name: "HTML5", category: "frontend", icon: "🌐" },
-    { name: "CSS3", category: "frontend", icon: "🎨" },
-    { name: "Bootstrap", category: "frontend", icon: "🛡️" },
-    { name: "TypeScript", category: "frontend", icon: "📘" },
-    { name: "Webpack", category: "frontend", icon: "📦" },
-    { name: "TailwindCSS", category: "frontend", icon: "💨" },
-    { name: "AntD", category: "frontend", icon: "🐜" },
-    { name: "Ruby", category: "backend", icon: "💎" },
-    { name: "Ruby on Rails", category: "backend", icon: "🛤️" },
-    { name: "Strapi", category: "backend", icon: "🚀" },
-    { name: "MongoDB", category: "backend", icon: "🍃" },
-    { name: "MySQL", category: "backend", icon: "🐬" },
-    { name: "PostgreSQL", category: "backend", icon: "🐘" },
-    { name: "NodeJS", category: "backend", icon: "🟢" },
-    { name: "Express", category: "backend", icon: "⚡️" },
-    { name: "GraphQL", category: "backend", icon: "📊" },
-    { name: "Machine Learning", category: "ai", icon: "🤖" },
-    { name: "LLMs", category: "ai", icon: "🧠" },
-    { name: "NLP", category: "ai", icon: "🗣️" },
-    { name: "Vite", category: "testing", icon: "⚡" },
-    { name: "Jest", category: "testing", icon: "🃏" },
-    { name: "TDD", category: "testing", icon: "✅" },
-    { name: "Playwright", category: "testing", icon: "🎭" },
-    { name: "Chrome Dev Tools", category: "testing", icon: "⚙️" },
-    { name: "Git", category: "tools", icon: "🌱" },
-    { name: "GitHub", category: "tools", icon: "🐙" },
-    { name: "VS Code", category: "tools", icon: "💻" },
-    { name: "Cursor", category: "tools", icon: "🗂️" },
-    { name: "AWS", category: "tools", icon: "☁️" },
-  ]
-
-  const projects = [
-    {
-      title: "E-Commerce Platform",
-      description:
-        "Full-stack e-commerce solution with payment integration, inventory management, and admin dashboard.",
-      image: "/placeholder.svg?height=200&width=300",
-      tech: ["Next.js", "TypeScript", "PostgreSQL", "Stripe"],
-      github: "#",
-      live: "#",
-      featured: true,
-      stats: { users: "10K+", revenue: "$500K+" },
-    },
-    {
-      title: "Task Management App",
-      description: "Collaborative project management tool with real-time updates, team collaboration, and analytics.",
-      image: "/placeholder.svg?height=200&width=300",
-      tech: ["React", "Node.js", "Socket.io", "MongoDB"],
-      github: "#",
-      live: "#",
-      featured: true,
-      stats: { teams: "200+", tasks: "50K+" },
-    },
-    {
-      title: "AI Content Generator",
-      description: "AI-powered content creation platform with multiple templates and export options.",
-      image: "/placeholder.svg?height=200&width=300",
-      tech: ["Python", "FastAPI", "OpenAI API", "React"],
-      github: "#",
-      live: "#",
-      featured: false,
-      stats: { content: "1M+", users: "5K+" },
-    },
-    {
-      title: "Real Estate Platform",
-      description: "Modern real estate platform with virtual tours, mortgage calculator, and agent dashboard.",
-      image: "/placeholder.svg?height=200&width=300",
-      tech: ["Next.js", "Three.js", "Prisma", "Stripe"],
-      github: "#",
-      live: "#",
-      featured: false,
-      stats: { properties: "2K+", views: "100K+" },
-    },
-  ]
-
-  const testimonials = [
-    {
-      name: "Sarah Johnson",
-      role: "Product Manager",
-      company: "10 Academy",
-      image: "/placeholder.svg?height=80&width=80",
-      content:
-        "Miliyon's work on our AI-driven assignment system was exceptional. His ability to integrate complex AI features while maintaining excellent user experience is remarkable. The 50% reduction in grading time speaks volumes about his technical expertise.",
-      rating: 5,
-    },
-    {
-      name: "David Chen",
-      role: "CTO",
-      company: "Ibex Technology",
-      image: "/placeholder.svg?height=80&width=80",
-      content:
-        "Working with Miliyon was a game-changer for our commodity distribution platform. His full-stack expertise and attention to detail helped us deliver a robust solution that improved our efficiency by 20%. Highly recommended!",
-      rating: 5,
-    },
-    {
-      name: "Maria Rodriguez",
-      role: "Senior Developer",
-      company: "TechStart Inc.",
-      image: "/placeholder.svg?height=80&width=80",
-      content:
-        "Miliyon's mentoring at Microverse was invaluable. His code reviews were thorough and his guidance helped me become a better developer. His passion for teaching and sharing knowledge is truly inspiring.",
-      rating: 5,
-    },
-    {
-      name: "Ahmed Hassan",
-      role: "Project Lead",
-      company: "Digital Solutions",
-      image: "/placeholder.svg?height=80&width=80",
-      content:
-        "The multilingual dashboard Miliyon built for us exceeded all expectations. His expertise in React and TypeScript, combined with his understanding of user experience, delivered exactly what we needed.",
-      rating: 5,
-    },
-  ]
-
-  const experience = [
-    {
-      title: "Front-end Developer",
-      company: "10 Academy",
-      period: "August 2023 - Present",
-      location: "Remote",
-      description:
-        "Developing user interfaces and implementing front-end logic for web applications. Collaborating with designers and back-end developers to deliver high-quality products.",
-      achievements: [
-        "Developed and maintained responsive web applications using React and related technologies.",
-        "Collaborated with designers to implement UI/UX designs and ensure a seamless user experience.",
-        "Participated in code reviews and contributed to improving code quality and maintainability.",
-        "Integrated front-end components with back-end APIs and data sources.",
-        "Implemented testing strategies to ensure the reliability and performance of web applications.",
-      ],
-      technologies: ["React", "JavaScript", "HTML", "CSS", "Redux", "TailwindCSS"],
-    },
-    {
-      title: "Intern",
-      company: "10 Academy",
-      period: "July 2023 - August 2023",
-      location: "Remote",
-      description:
-        "Assisted senior developers in building and maintaining web applications. Gained experience in front-end development and software engineering best practices.",
-      achievements: [
-        "Assisted in the development of new features and enhancements for existing web applications.",
-        "Participated in code reviews and learned about software engineering best practices.",
-        "Contributed to the improvement of code quality and maintainability.",
-        "Worked with a team of developers to deliver high-quality products.",
-        "Gained experience in front-end development and software engineering.",
-      ],
-      technologies: ["React", "JavaScript", "HTML", "CSS"],
-    },
-    {
-      title: "Full Stack Developer",
-      company: "Ibex Technology",
-      period: "January 2023 - June 2023",
-      location: "Remote",
-      description:
-        "Developed and maintained full-stack web applications using modern technologies. Collaborated with designers and product managers to deliver high-quality products.",
-      achievements: [
-        "Developed and maintained full-stack web applications using React, Node.js, and related technologies.",
-        "Collaborated with designers and product managers to implement UI/UX designs and ensure a seamless user experience.",
-        "Participated in code reviews and contributed to improving code quality and maintainability.",
-        "Integrated front-end components with back-end APIs and data sources.",
-        "Implemented testing strategies to ensure the reliability and performance of web applications.",
-      ],
-      technologies: ["React", "Node.js", "JavaScript", "HTML", "CSS", "MongoDB"],
-    },
-    {
-      title: "Mentor",
-      company: "MICROVERSE",
-      period: "September 2022 - October 2022",
-      location: "Remote",
-      description:
-        "Mentored junior developers and provided guidance on software engineering best practices. Assisted students in completing coding projects and preparing for technical interviews.",
-      achievements: [
-        "Mentored junior developers and provided guidance on software engineering best practices.",
-        "Assisted students in completing coding projects and preparing for technical interviews.",
-        "Provided feedback on code quality and maintainability.",
-        "Helped students improve their problem-solving skills and technical knowledge.",
-        "Contributed to the success of the Microverse program.",
-      ],
-      technologies: ["JavaScript", "HTML", "CSS", "React"],
-    },
-  ]
-
-  const nextProject = () => {
-    setCurrentProjectIndex((prev) => (prev + 1) % projects.length)
-  }
-
-  const prevProject = () => {
-    setCurrentProjectIndex((prev) => (prev - 1 + projects.length) % projects.length)
-  }
-
-  const nextTestimonial = () => {
-    setCurrentTestimonialIndex((prev) => (prev + 1) % testimonials.length)
-  }
-
-  const prevTestimonial = () => {
-    setCurrentTestimonialIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length)
-  }
-
-  useEffect(() => {
-    const projectInterval = setInterval(nextProject, 5000)
-    return () => clearInterval(projectInterval)
   }, [])
 
+  const nextProject = useCallback(() => {
+    if (lazyData?.PROJECTS_DATA?.length) {
+      setCurrentProjectIndex((prev) => (prev + 1) % lazyData.PROJECTS_DATA.length)
+    }
+  }, [lazyData])
+
+  const prevProject = useCallback(() => {
+    if (lazyData?.PROJECTS_DATA?.length) {
+      setCurrentProjectIndex((prev) => (prev - 1 + lazyData.PROJECTS_DATA.length) % lazyData.PROJECTS_DATA.length)
+    }
+  }, [lazyData])
+
+  const nextTestimonial = useCallback(() => {
+    if (lazyData?.TESTIMONIALS_DATA?.length) {
+      setCurrentTestimonialIndex((prev) => (prev + 1) % lazyData.TESTIMONIALS_DATA.length)
+    }
+  }, [lazyData])
+
+  const prevTestimonial = useCallback(() => {
+    if (lazyData?.TESTIMONIALS_DATA?.length) {
+      setCurrentTestimonialIndex((prev) => (prev - 1 + lazyData.TESTIMONIALS_DATA.length) % lazyData.TESTIMONIALS_DATA.length)
+    }
+  }, [lazyData])
+
+  // Auto-advance project carousel
   useEffect(() => {
-    const testimonialInterval = setInterval(nextTestimonial, 4000)
-    return () => clearInterval(testimonialInterval)
-  }, [])
+    if (lazyData?.PROJECTS_DATA?.length) {
+      const interval = setInterval(nextProject, 5000)
+      return () => clearInterval(interval)
+    }
+  }, [nextProject, lazyData])
+
+  // Auto-advance testimonial carousel
+  useEffect(() => {
+    if (lazyData?.TESTIMONIALS_DATA?.length) {
+      const interval = setInterval(nextTestimonial, 4000)
+      return () => clearInterval(interval)
+    }
+  }, [nextTestimonial, lazyData])
+
+  const statsData = useMemo(() => [
+    { icon: Award, label: CORE_CONTENT.hero.stats.projectsCompleted, value: projectsCompleted.count, ref: projectsCompleted.ref },
+    { icon: Users, label: CORE_CONTENT.hero.stats.happyClients, value: clientsSatisfied.count, ref: clientsSatisfied.ref },
+    { icon: Coffee, label: CORE_CONTENT.hero.stats.cupsOfCoffee, value: cupsOfCoffee.count, ref: cupsOfCoffee.ref },
+    { icon: Star, label: CORE_CONTENT.hero.stats.yearsExperience, value: yearsExperience.count, ref: yearsExperience.ref },
+  ], [projectsCompleted.count, clientsSatisfied.count, cupsOfCoffee.count, yearsExperience.count, projectsCompleted.ref, clientsSatisfied.ref, cupsOfCoffee.ref, yearsExperience.ref])
 
   return (
     <div className="min-h-screen bg-background text-foreground relative overflow-hidden">
@@ -424,14 +275,14 @@ export default function Portfolio() {
           <div className="flex justify-between items-center h-16">
             <div className="font-bold text-xl group cursor-pointer" onClick={() => scrollToSection("home")}>
               <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent transition-all duration-300 group-hover:scale-110 inline-block">
-                Miliyon
+                {CORE_CONTENT.navigation.logo.firstName}
               </span>
-              <span className="ml-1 transition-all duration-300 group-hover:text-primary"> Ayalew</span>
+              <span className="ml-1 transition-all duration-300 group-hover:text-primary"> {CORE_CONTENT.navigation.logo.lastName}</span>
             </div>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex space-x-8">
-              {["home", "about", "skills", "projects", "experience", "contact"].map((item) => (
+              {CORE_CONTENT.navigation.menuItems.map((item) => (
                 <button
                   key={item}
                   onClick={() => scrollToSection(item)}
@@ -451,7 +302,6 @@ export default function Portfolio() {
 
             <div className="flex items-center space-x-4">
               <ThemeToggle />
-              {/* Mobile Menu Button */}
               <button
                 className="md:hidden transition-transform duration-300 hover:scale-110"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -467,7 +317,7 @@ export default function Portfolio() {
               isMenuOpen ? "max-h-80 py-4 border-t border-border/50" : "max-h-0"
             }`}
           >
-            {["home", "about", "skills", "projects", "experience", "contact"].map((item) => (
+            {CORE_CONTENT.navigation.menuItems.map((item) => (
               <button
                 key={item}
                 onClick={() => scrollToSection(item)}
@@ -480,52 +330,36 @@ export default function Portfolio() {
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* Hero Section - Loads immediately */}
       <section id="home" className="pt-16 min-h-screen flex items-center relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
               <div className="space-y-4">
-                <div
-                  className="text-primary font-medium text-lg animate-fade-in-up opacity-0"
-                  style={{ animationDelay: "0.2s", animationFillMode: "forwards" }}
-                >
-                  Hello, I'm
+                <div className="text-primary font-medium text-lg opacity-100">
+                  {CORE_CONTENT.hero.greeting}
                 </div>
-                <h1
-                  className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight animate-fade-in-up opacity-0"
-                  style={{ animationDelay: "0.4s", animationFillMode: "forwards" }}
-                >
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight opacity-100">
                   <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-                    Miliyon Ayalew
+                    {CORE_CONTENT.hero.name}
                   </span>
                 </h1>
-                <div
-                  className="text-xl sm:text-2xl text-muted-foreground h-8 animate-fade-in-up opacity-0"
-                  style={{ animationDelay: "0.6s", animationFillMode: "forwards" }}
-                >
+                <div className="text-xl sm:text-2xl text-muted-foreground h-8 opacity-100">
                   {typedText}
                   <span className="animate-pulse text-primary">|</span>
                 </div>
-                <p
-                  className="text-lg text-muted-foreground max-w-2xl animate-fade-in-up opacity-0"
-                  style={{ animationDelay: "0.8s", animationFillMode: "forwards" }}
-                >
-                  A passionate and versatile full-stack developer with a knack for crafting innovative solutions.
-                  Dedicated to continuous learning and pushing the boundaries of what's possible.
+                <p className="text-lg text-muted-foreground max-w-2xl opacity-100">
+                  {CORE_CONTENT.hero.description}
                 </p>
               </div>
 
-              <div
-                className="flex flex-wrap gap-4 animate-fade-in-up opacity-0"
-                style={{ animationDelay: "1s", animationFillMode: "forwards" }}
-              >
+              <div className="flex flex-wrap gap-4 opacity-100">
                 <Button
                   onClick={() => scrollToSection("projects")}
                   size="lg"
                   className="group bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25"
                 >
-                  View My Work
+                  {CORE_CONTENT.hero.buttons.viewWork}
                   <ExternalLink className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
                 <Button
@@ -534,19 +368,16 @@ export default function Portfolio() {
                   onClick={() => scrollToSection("contact")}
                   className="group transition-all duration-300 hover:scale-105 hover:shadow-lg border-primary/50 hover:border-primary"
                 >
-                  Get In Touch
+                  {CORE_CONTENT.hero.buttons.getInTouch}
                   <Send className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
                 <Button variant="ghost" size="lg" className="group transition-all duration-300 hover:scale-105">
                   <Download className="mr-2 h-4 w-4 transition-transform group-hover:translate-y-1" />
-                  Resume
+                  {CORE_CONTENT.hero.buttons.resume}
                 </Button>
               </div>
 
-              <div
-                className="flex space-x-4 animate-fade-in-up opacity-0"
-                style={{ animationDelay: "1.2s", animationFillMode: "forwards" }}
-              >
+              <div className="flex space-x-4 opacity-100">
                 {[
                   { icon: Github, href: "#", label: "GitHub" },
                   { icon: Linkedin, href: "#", label: "LinkedIn" },
@@ -564,18 +395,16 @@ export default function Portfolio() {
               </div>
             </div>
 
-            <div
-              className="relative animate-fade-in-up opacity-0"
-              style={{ animationDelay: "0.6s", animationFillMode: "forwards" }}
-            >
+            <div className="relative opacity-100">
               <div className="relative w-80 h-80 mx-auto group">
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full animate-pulse opacity-20 group-hover:opacity-30 transition-opacity duration-300 blur-xl"></div>
                 <Image
-                  src="/placeholder.svg?height=320&width=320"
+                  src="/miliyon.png"
                   alt="Miliyon Ayalew"
                   width={320}
                   height={320}
                   className="relative z-10 rounded-full object-cover border-4 border-primary/20 transition-transform duration-300 group-hover:scale-105"
+                  priority
                 />
                 <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-blue-500/20 via-purple-500/20 to-pink-500/20 transition-opacity duration-300 group-hover:opacity-50"></div>
               </div>
@@ -583,16 +412,8 @@ export default function Portfolio() {
           </div>
 
           {/* Stats Section */}
-          <div
-            className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20 animate-fade-in-up opacity-0"
-            style={{ animationDelay: "1.4s", animationFillMode: "forwards" }}
-          >
-            {[
-              { icon: Award, label: "Projects Completed", value: projectsCompleted.count, ref: projectsCompleted.ref },
-              { icon: Users, label: "Happy Clients", value: clientsSatisfied.count, ref: clientsSatisfied.ref },
-              { icon: Coffee, label: "Cups of Coffee", value: cupsOfCoffee.count, ref: cupsOfCoffee.ref },
-              { icon: Star, label: "Years Experience", value: yearsExperience.count, ref: yearsExperience.ref },
-            ].map(({ icon: Icon, label, value, ref }) => (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20 opacity-100">
+            {statsData.map(({ icon: Icon, label, value, ref }) => (
               <div key={label} ref={ref} className="text-center group">
                 <Icon className="h-8 w-8 text-primary mx-auto mb-2 transition-transform duration-300 group-hover:scale-110" />
                 <div className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
@@ -609,6 +430,7 @@ export default function Portfolio() {
         </div>
       </section>
 
+      {/* Sections load based on data availability */}
       {/* About Section */}
       <section id="about" className="py-20 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -619,89 +441,68 @@ export default function Portfolio() {
             }`}
           >
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-              About Me
+              {CORE_CONTENT.sections.about.title}
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              A Full-Stack Developer with a background in Software Engineering from Haramaya University. Passionate
-              about creating innovative solutions and dedicated to continuous learning.
+              {CORE_CONTENT.sections.about.subtitle}
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div
-              className={`space-y-6 transition-all duration-1000 delay-200 ${
-                aboutSection.isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
-              }`}
-            >
-              <h3 className="text-2xl font-semibold">My Journey</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                From my early days at Haramaya University to my current role as a Full-Stack Developer, I've always been
-                driven by a passion for technology and a desire to create meaningful solutions.
-              </p>
-              <p className="text-muted-foreground leading-relaxed">
-                I thrive on challenges and enjoy working with cutting-edge technologies to build scalable and efficient
-                applications. My goal is to leverage my skills and experience to make a positive impact on the world.
-              </p>
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  { icon: Code, label: "Clean Code" },
-                  { icon: Zap, label: "Performance" },
-                  { icon: Smartphone, label: "Responsive" },
-                  { icon: Globe, label: "Accessible" },
-                ].map(({ icon: Icon, label }) => (
-                  <div key={label} className="flex items-center space-x-2 group">
-                    <Icon className="h-5 w-5 text-primary group-hover:scale-110 transition-transform duration-300" />
-                    <span className="text-sm">{label}</span>
-                  </div>
+          {isDataLoaded && lazyData?.ABOUT_CONTENT && (
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div
+                className={`space-y-6 transition-all duration-1000 delay-200 ${
+                  aboutSection.isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
+                }`}
+              >
+                <h3 className="text-2xl font-semibold">{lazyData.ABOUT_CONTENT.sectionTitle}</h3>
+                {lazyData.ABOUT_CONTENT.description.map((paragraph: string, index: number) => (
+                  <p key={index} className="text-muted-foreground leading-relaxed">
+                    {paragraph}
+                  </p>
                 ))}
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    { icon: Code, label: lazyData.ABOUT_CONTENT.qualities[0].label },
+                    { icon: Zap, label: lazyData.ABOUT_CONTENT.qualities[1].label },
+                    { icon: Smartphone, label: lazyData.ABOUT_CONTENT.qualities[2].label },
+                    { icon: Globe, label: lazyData.ABOUT_CONTENT.qualities[3].label },
+                  ].map(({ icon: Icon, label }) => (
+                    <div key={label} className="flex items-center space-x-2 group">
+                      <Icon className="h-5 w-5 text-primary group-hover:scale-110 transition-transform duration-300" />
+                      <span className="text-sm">{label}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            <div
-              className={`relative transition-all duration-1000 delay-400 ${
-                aboutSection.isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"
-              }`}
-            >
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-600/20 rounded-lg blur-xl"></div>
-                <Card className="relative bg-card/50 backdrop-blur-sm border-primary/20">
+              <div
+                className={`relative transition-all duration-1000 delay-400 ${
+                  aboutSection.isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"
+                }`}
+              >
+                <Card className="bg-card/50 backdrop-blur-sm border-primary/20">
                   <CardContent className="p-6">
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">Problem Solving</span>
-                        <div className="flex space-x-1">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <div key={star} className="w-3 h-3 bg-primary rounded-full"></div>
-                          ))}
+                      {lazyData.ABOUT_CONTENT.skillRatings.map((rating: any) => (
+                        <div key={rating.skill} className="flex items-center justify-between">
+                          <span className="text-sm font-medium">{rating.skill}</span>
+                          <div className="flex space-x-1">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <div
+                                key={star}
+                                className={`w-3 h-3 rounded-full ${star <= rating.rating ? "bg-primary" : "bg-muted"}`}
+                              ></div>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">Team Collaboration</span>
-                        <div className="flex space-x-1">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <div
-                              key={star}
-                              className={`w-3 h-3 rounded-full ${star <= 4 ? "bg-primary" : "bg-muted"}`}
-                            ></div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">Learning Agility</span>
-                        <div className="flex space-x-1">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <div key={star} className="w-3 h-3 bg-primary rounded-full"></div>
-                          ))}
-                        </div>
-                      </div>
+                      ))}
                     </div>
                   </CardContent>
                 </Card>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
 
@@ -715,76 +516,51 @@ export default function Portfolio() {
             }`}
           >
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-              Technical Skills
+              {CORE_CONTENT.sections.skills.title}
             </h2>
-            <p className="text-lg text-muted-foreground">Technologies and tools I use to bring ideas to life</p>
+            <p className="text-lg text-muted-foreground">{CORE_CONTENT.sections.skills.subtitle}</p>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8 mb-12">
-            {[
-              {
-                icon: Code,
-                title: "Frontend Development",
-                description: "Creating responsive, interactive user interfaces with modern frameworks and libraries.",
-                skills: skills.filter((s) => s.category === "frontend"),
-              },
-              {
-                icon: Server,
-                title: "Backend Development",
-                description: "Building scalable server-side applications and APIs with robust architecture.",
-                skills: skills.filter((s) => s.category === "backend"),
-              },
-              {
-                icon: Database,
-                title: "AI & Machine Learning",
-                description: "Developing AI solutions and implementing machine learning algorithms.",
-                skills: skills.filter((s) => s.category === "ai"),
-              },
-              {
-                icon: Database,
-                title: "Testing",
-                description:
-                  "Implementing testing strategies to ensure the reliability and performance of web applications.",
-                skills: skills.filter((s) => s.category === "testing"),
-              },
-              {
-                icon: Database,
-                title: "DevOps & Tools",
-                description: "Implementing CI/CD pipelines and managing cloud infrastructure for optimal performance.",
-                skills: skills.filter((s) => s.category === "tools"),
-              },
-            ].map((category, index) => (
-              <Card
-                key={category.title}
-                className={`group hover:shadow-xl transition-all duration-500 hover:-translate-y-2 bg-card/50 backdrop-blur-sm border-primary/20 ${
-                  skillsSection.isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-                }`}
-                style={{ transitionDelay: `${index * 200}ms` }}
-              >
-                <CardHeader className="text-center">
-                  <category.icon className="h-12 w-12 text-primary mx-auto mb-4 transition-transform duration-300 group-hover:scale-110" />
-                  <CardTitle className="group-hover:text-primary transition-colors duration-300">
-                    {category.title}
-                  </CardTitle>
-                  <CardDescription>{category.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    {category.skills.map((skill) => (
-                      <Badge
-                        key={skill.name}
-                        variant="secondary"
-                        className="transition-all duration-300 hover:scale-105 hover:bg-primary/20 flex items-center gap-2"
-                      >
-                        <span>{skill.icon}</span>
-                        {skill.name}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          {isDataLoaded && lazyData?.SKILLS_CATEGORIES && (
+            <div className="grid lg:grid-cols-3 gap-8 mb-12">
+              {lazyData.SKILLS_CATEGORIES.map((category: any, index: number) => {
+                const IconComponent = category.category === "frontend" ? Code : 
+                                    category.category === "backend" ? Server : Database;
+                
+                return (
+                  <Card
+                    key={category.title}
+                    className={`group hover:shadow-xl transition-all duration-500 hover:-translate-y-2 bg-card/50 backdrop-blur-sm border-primary/20 ${
+                      skillsSection.isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+                    }`}
+                    style={{ transitionDelay: `${index * 100}ms` }}
+                  >
+                    <CardHeader className="text-center">
+                      <IconComponent className="h-12 w-12 text-primary mx-auto mb-4 transition-transform duration-300 group-hover:scale-110" />
+                      <CardTitle className="group-hover:text-primary transition-colors duration-300">
+                        {category.title}
+                      </CardTitle>
+                      <CardDescription>{category.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="flex flex-wrap gap-2 justify-center">
+                        {category.skills.map((skill: any) => (
+                          <Badge
+                            key={skill.name}
+                            variant="secondary"
+                            className="transition-all duration-300 hover:scale-105 hover:bg-primary/20 flex items-center gap-2"
+                          >
+                            <span>{skill.icon}</span>
+                            {skill.name}
+                          </Badge>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
+              })}
+            </div>
+          )}
         </div>
       </section>
 
@@ -798,143 +574,126 @@ export default function Portfolio() {
             }`}
           >
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-              Featured Projects
+              {CORE_CONTENT.sections.projects.title}
             </h2>
             <p className="text-lg text-muted-foreground">
-              Here are some of my recent projects that showcase my skills and experience.
+              {CORE_CONTENT.sections.projects.subtitle}
             </p>
           </div>
 
-          {/* Project Carousel */}
-          <div className="relative max-w-4xl mx-auto">
-            <div className="overflow-hidden rounded-2xl">
-              <div
-                className="flex transition-transform duration-500 ease-in-out"
-                style={{ transform: `translateX(-${currentProjectIndex * 100}%)` }}
-              >
-                {projects.map((project, index) => (
-                  <div key={index} className="w-full flex-shrink-0">
-                    <Card className="group hover:shadow-2xl transition-all duration-500 overflow-hidden bg-card/50 backdrop-blur-sm border-primary/20 mx-4">
-                      <div className="grid md:grid-cols-2 gap-0">
-                        {/* Project Image */}
-                        <div className="relative overflow-hidden h-64 md:h-auto">
-                          <Image
-                            src={project.image || "/placeholder.svg"}
-                            alt={project.title}
-                            width={400}
-                            height={300}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                          />
-                          {project.featured && (
-                            <Badge className="absolute top-4 left-4 bg-gradient-to-r from-blue-500 to-purple-600">
-                              Featured
-                            </Badge>
-                          )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
-                            <div className="flex space-x-2">
-                              <Button size="sm" variant="secondary" asChild>
-                                <Link href={project.github}>
-                                  <Github className="h-4 w-4" />
-                                </Link>
-                              </Button>
-                              <Button size="sm" variant="secondary" asChild>
-                                <Link href={project.live}>
-                                  <ExternalLink className="h-4 w-4" />
-                                </Link>
-                              </Button>
-                            </div>
+          {isDataLoaded && lazyData?.PROJECTS_DATA && (
+            <div className="relative max-w-4xl mx-auto">
+              <div className="overflow-hidden rounded-2xl">
+                <div
+                  className="flex transition-transform duration-500 ease-in-out"
+                  style={{ transform: `translateX(-${currentProjectIndex * 100}%)` }}
+                >
+                  {lazyData.PROJECTS_DATA.map((project: any, index: number) => (
+                    <div key={index} className="w-full flex-shrink-0">
+                      <Card className="group hover:shadow-2xl transition-all duration-500 overflow-hidden bg-card/50 backdrop-blur-sm border-primary/20 mx-4">
+                        <div className="grid md:grid-cols-2 gap-0">
+                          <div className="relative overflow-hidden h-64 md:h-auto">
+                            <Image
+                              src={project.image || "/placeholder.svg"}
+                              alt={project.title}
+                              width={400}
+                              height={300}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            />
+                            {project.featured && (
+                              <Badge className="absolute top-4 left-4 bg-gradient-to-r from-blue-500 to-purple-600">
+                                {lazyData.PROJECT_CONTENT?.featuredBadge || "Featured"}
+                              </Badge>
+                            )}
                           </div>
-                        </div>
 
-                        {/* Project Content */}
-                        <div className="p-8 flex flex-col justify-center">
-                          <CardHeader className="p-0 mb-4">
-                            <CardTitle className="text-2xl group-hover:text-primary transition-colors duration-300">
-                              {project.title}
-                            </CardTitle>
-                            <CardDescription className="text-base">{project.description}</CardDescription>
-                          </CardHeader>
+                          <div className="p-8 flex flex-col justify-center">
+                            <CardHeader className="p-0 mb-4">
+                              <CardTitle className="text-2xl group-hover:text-primary transition-colors duration-300">
+                                {project.title}
+                              </CardTitle>
+                              <CardDescription className="text-base">{project.description}</CardDescription>
+                            </CardHeader>
 
-                          <CardContent className="p-0 space-y-6">
-                            <div className="flex flex-wrap gap-2">
-                              {project.tech.map((tech) => (
-                                <Badge
-                                  key={tech}
-                                  variant="outline"
-                                  className="transition-all duration-300 hover:scale-105"
-                                >
-                                  {tech}
-                                </Badge>
-                              ))}
-                            </div>
-
-                            {project.stats && (
-                              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/50">
-                                {Object.entries(project.stats).map(([key, value]) => (
-                                  <div key={key} className="text-center">
-                                    <div className="font-semibold text-primary text-lg">{value}</div>
-                                    <div className="text-sm text-muted-foreground capitalize">{key}</div>
-                                  </div>
+                            <CardContent className="p-0 space-y-6">
+                              <div className="flex flex-wrap gap-2">
+                                {project.tech.map((tech: string) => (
+                                  <Badge
+                                    key={tech}
+                                    variant="outline"
+                                    className="transition-all duration-300 hover:scale-105"
+                                  >
+                                    {tech}
+                                  </Badge>
                                 ))}
                               </div>
-                            )}
 
-                            <div className="flex space-x-4 pt-4">
-                              <Button variant="outline" size="sm" asChild className="flex-1 bg-transparent">
-                                <Link href={project.github}>
-                                  <Github className="h-4 w-4 mr-2" />
-                                  Code
-                                </Link>
-                              </Button>
-                              <Button size="sm" asChild className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600">
-                                <Link href={project.live}>
-                                  <ExternalLink className="h-4 w-4 mr-2" />
-                                  Live Demo
-                                </Link>
-                              </Button>
-                            </div>
-                          </CardContent>
+                              {project.stats && (
+                                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/50">
+                                  {Object.entries(project.stats).map(([key, value]) => (
+                                    <div key={key} className="text-center">
+                                      <div className="font-semibold text-primary text-lg">{value as string}</div>
+                                      <div className="text-sm text-muted-foreground capitalize">{key}</div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+
+                              <div className="flex space-x-4 pt-4">
+                                <Button variant="outline" size="sm" asChild className="flex-1 bg-transparent">
+                                  <Link href={project.github}>
+                                    <Github className="h-4 w-4 mr-2" />
+                                    {lazyData.PROJECT_CONTENT?.buttons?.code || "Code"}
+                                  </Link>
+                                </Button>
+                                <Button size="sm" asChild className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600">
+                                  <Link href={project.live}>
+                                    <ExternalLink className="h-4 w-4 mr-2" />
+                                    {lazyData.PROJECT_CONTENT?.buttons?.liveDemo || "Live Demo"}
+                                  </Link>
+                                </Button>
+                              </div>
+                            </CardContent>
+                          </div>
                         </div>
-                      </div>
-                    </Card>
-                  </div>
+                      </Card>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <Button
+                variant="outline"
+                size="icon"
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-background/80 backdrop-blur-sm border-primary/20 hover:bg-primary/10"
+                onClick={prevProject}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-background/80 backdrop-blur-sm border-primary/20 hover:bg-primary/10"
+                onClick={nextProject}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+
+              <div className="flex justify-center space-x-2 mt-8">
+                {lazyData.PROJECTS_DATA.map((_: any, index: number) => (
+                  <button
+                    key={index}
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                      index === currentProjectIndex
+                        ? "bg-gradient-to-r from-blue-500 to-purple-600 scale-125"
+                        : "bg-muted hover:bg-muted-foreground/50"
+                    }`}
+                    onClick={() => setCurrentProjectIndex(index)}
+                  />
                 ))}
               </div>
             </div>
-
-            {/* Navigation Buttons */}
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-background/80 backdrop-blur-sm border-primary/20 hover:bg-primary/10"
-              onClick={prevProject}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-background/80 backdrop-blur-sm border-primary/20 hover:bg-primary/10"
-              onClick={nextProject}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-
-            {/* Dots Indicator */}
-            <div className="flex justify-center space-x-2 mt-8">
-              {projects.map((_, index) => (
-                <button
-                  key={index}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    index === currentProjectIndex
-                      ? "bg-gradient-to-r from-blue-500 to-purple-600 scale-125"
-                      : "bg-muted hover:bg-muted-foreground/50"
-                  }`}
-                  onClick={() => setCurrentProjectIndex(index)}
-                />
-              ))}
-            </div>
-          </div>
+          )}
         </div>
       </section>
 
@@ -948,14 +707,16 @@ export default function Portfolio() {
             }`}
           >
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-              Professional Experience
+              {CORE_CONTENT.sections.experience.title}
             </h2>
             <p className="text-lg text-muted-foreground">
-              My journey through different roles and the impact I've made at each company.
+              {CORE_CONTENT.sections.experience.subtitle}
             </p>
           </div>
 
-          <ExperienceTimeline experiences={experience} isVisible={experienceSection.isVisible} />
+          {isDataLoaded && lazyData?.EXPERIENCE_DATA && (
+            <ExperienceTimeline experiences={lazyData.EXPERIENCE_DATA} isVisible={experienceSection.isVisible} />
+          )}
         </div>
       </section>
 
@@ -964,89 +725,89 @@ export default function Portfolio() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-              What People Say
+              {CORE_CONTENT.sections.testimonials.title}
             </h2>
             <p className="text-lg text-muted-foreground">
-              Testimonials from colleagues, clients, and mentees I've worked with.
+              {CORE_CONTENT.sections.testimonials.subtitle}
             </p>
           </div>
 
-          {/* Testimonials Carousel */}
-          <div className="relative max-w-4xl mx-auto">
-            <div className="overflow-hidden">
-              <div
-                className="flex transition-transform duration-500 ease-in-out"
-                style={{ transform: `translateX(-${currentTestimonialIndex * 100}%)` }}
-              >
-                {testimonials.map((testimonial, index) => (
-                  <div key={index} className="w-full flex-shrink-0 px-4">
-                    <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:shadow-xl transition-all duration-300">
-                      <CardContent className="p-8 text-center">
-                        <Quote className="h-12 w-12 text-primary mx-auto mb-6 opacity-50" />
+          {isDataLoaded && lazyData?.TESTIMONIALS_DATA && (
+            <div className="relative max-w-4xl mx-auto">
+              <div className="overflow-hidden">
+                <div
+                  className="flex transition-transform duration-500 ease-in-out"
+                  style={{ transform: `translateX(-${currentTestimonialIndex * 100}%)` }}
+                >
+                  {lazyData.TESTIMONIALS_DATA.map((testimonial: any, index: number) => (
+                    <div key={index} className="w-full flex-shrink-0 px-4">
+                      <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:shadow-xl transition-all duration-300">
+                        <CardContent className="p-8 text-center">
+                          <Quote className="h-12 w-12 text-primary mx-auto mb-6 opacity-50" />
 
-                        <blockquote className="text-lg text-muted-foreground leading-relaxed mb-8 italic">
-                          "{testimonial.content}"
-                        </blockquote>
+                          <blockquote className="text-lg text-muted-foreground leading-relaxed mb-8 italic">
+                            "{testimonial.content}"
+                          </blockquote>
 
-                        <div className="flex items-center justify-center space-x-4">
-                          <Image
-                            src={testimonial.image || "/placeholder.svg"}
-                            alt={testimonial.name}
-                            width={60}
-                            height={60}
-                            className="rounded-full border-2 border-primary/20"
-                          />
-                          <div className="text-left">
-                            <div className="font-semibold text-foreground">{testimonial.name}</div>
-                            <div className="text-sm text-muted-foreground">{testimonial.role}</div>
-                            <div className="text-sm text-primary font-medium">{testimonial.company}</div>
+                          <div className="flex items-center justify-center space-x-4">
+                            <Image
+                              src={testimonial.image || "/placeholder.svg"}
+                              alt={testimonial.name}
+                              width={60}
+                              height={60}
+                              className="rounded-full border-2 border-primary/20"
+                            />
+                            <div className="text-left">
+                              <div className="font-semibold text-foreground">{testimonial.name}</div>
+                              <div className="text-sm text-muted-foreground">{testimonial.role}</div>
+                              <div className="text-sm text-primary font-medium">{testimonial.company}</div>
+                            </div>
                           </div>
-                        </div>
 
-                        <div className="flex justify-center space-x-1 mt-4">
-                          {[...Array(testimonial.rating)].map((_, i) => (
-                            <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
+                          <div className="flex justify-center space-x-1 mt-4">
+                            {[...Array(testimonial.rating)].map((_, i) => (
+                              <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                            ))}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <Button
+                variant="outline"
+                size="icon"
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-background/80 backdrop-blur-sm border-primary/20 hover:bg-primary/10"
+                onClick={prevTestimonial}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-background/80 backdrop-blur-sm border-primary/20 hover:bg-primary/10"
+                onClick={nextTestimonial}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+
+              <div className="flex justify-center space-x-2 mt-8">
+                {lazyData.TESTIMONIALS_DATA.map((_: any, index: number) => (
+                  <button
+                    key={index}
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                      index === currentTestimonialIndex
+                        ? "bg-gradient-to-r from-blue-500 to-purple-600 scale-125"
+                        : "bg-muted hover:bg-muted-foreground/50"
+                    }`}
+                    onClick={() => setCurrentTestimonialIndex(index)}
+                  />
                 ))}
               </div>
             </div>
-
-            {/* Navigation Buttons */}
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-background/80 backdrop-blur-sm border-primary/20 hover:bg-primary/10"
-              onClick={prevTestimonial}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-background/80 backdrop-blur-sm border-primary/20 hover:bg-primary/10"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-
-            {/* Dots Indicator */}
-            <div className="flex justify-center space-x-2 mt-8">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    index === currentTestimonialIndex
-                      ? "bg-gradient-to-r from-blue-500 to-purple-600 scale-125"
-                      : "bg-muted hover:bg-muted-foreground/50"
-                  }`}
-                  onClick={() => setCurrentTestimonialIndex(index)}
-                />
-              ))}
-            </div>
-          </div>
+          )}
         </div>
       </section>
 
@@ -1055,38 +816,42 @@ export default function Portfolio() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-              Get In Touch
+              {CORE_CONTENT.sections.contact.title}
             </h2>
             <p className="text-lg text-muted-foreground">
-              I'm always open to discussing new opportunities and interesting projects.
+              {CORE_CONTENT.sections.contact.subtitle}
             </p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12">
             <div className="space-y-8">
               <div>
-                <h3 className="text-2xl font-semibold mb-4">Let's work together</h3>
+                <h3 className="text-2xl font-semibold mb-4">
+                  {isDataLoaded && lazyData?.CONTACT_CONTENT ? lazyData.CONTACT_CONTENT.sectionTitle : "Let's work together"}
+                </h3>
                 <p className="text-muted-foreground mb-6">
-                  Whether you have a project in mind or just want to chat about technology, I'd love to hear from you.
+                  {isDataLoaded && lazyData?.CONTACT_CONTENT ? lazyData.CONTACT_CONTENT.description : "Whether you have a project in mind or just want to chat about technology, I'd love to hear from you."}
                 </p>
               </div>
 
-              <div className="space-y-4">
-                {[
-                  { icon: Mail, label: "miliayalew@gmail.com", href: "mailto:miliayalew@gmail.com" },
-                  { icon: MapPin, label: "Remote (originally from Ethiopia)", href: "#" },
-                  { icon: MapPin, label: "+251922765739", href: "#" },
-                ].map(({ icon: Icon, label, href }) => (
-                  <Link
-                    key={label}
-                    href={href}
-                    className="flex items-center space-x-3 group hover:text-primary transition-colors duration-300"
-                  >
-                    <Icon className="h-5 w-5 text-primary group-hover:scale-110 transition-transform duration-300" />
-                    <span>{label}</span>
-                  </Link>
-                ))}
-              </div>
+              {isDataLoaded && lazyData?.CONTACT_CONTENT && (
+                <div className="space-y-4">
+                  {[
+                    { icon: Mail, label: lazyData.CONTACT_CONTENT.contactInfo.email, href: `mailto:${lazyData.CONTACT_CONTENT.contactInfo.email}` },
+                    { icon: MapPin, label: lazyData.CONTACT_CONTENT.contactInfo.location, href: "#" },
+                    { icon: MapPin, label: lazyData.CONTACT_CONTENT.contactInfo.phone, href: "#" },
+                  ].map(({ icon: Icon, label, href }) => (
+                    <Link
+                      key={label}
+                      href={href}
+                      className="flex items-center space-x-3 group hover:text-primary transition-colors duration-300"
+                    >
+                      <Icon className="h-5 w-5 text-primary group-hover:scale-110 transition-transform duration-300" />
+                      <span>{label}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
 
               <div className="flex space-x-4">
                 {[
@@ -1108,37 +873,43 @@ export default function Portfolio() {
 
             <Card className="hover:shadow-xl transition-all duration-300 bg-card/50 backdrop-blur-sm border-primary/20">
               <CardHeader>
-                <CardTitle>Send me a message</CardTitle>
+                <CardTitle>
+                  {isDataLoaded && lazyData?.CONTACT_CONTENT ? lazyData.CONTACT_CONTENT.form.title : "Send me a message"}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 {formSubmitted ? (
                   <div className="text-center py-8 space-y-4">
                     <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
-                    <h3 className="text-xl font-semibold text-green-600">Message Sent!</h3>
-                    <p className="text-muted-foreground">Thank you for reaching out. I'll get back to you soon!</p>
+                    <h3 className="text-xl font-semibold text-green-600">
+                      {isDataLoaded && lazyData?.CONTACT_CONTENT ? lazyData.CONTACT_CONTENT.form.success.title : "Message Sent!"}
+                    </h3>
+                    <p className="text-muted-foreground">
+                      {isDataLoaded && lazyData?.CONTACT_CONTENT ? lazyData.CONTACT_CONTENT.form.success.message : "Thank you for reaching out. I'll get back to you soon!"}
+                    </p>
                   </div>
                 ) : (
                   <form onSubmit={handleFormSubmit} className="space-y-4">
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="name" className="block text-sm font-medium mb-2">
-                          Name
+                          {isDataLoaded && lazyData?.CONTACT_CONTENT ? lazyData.CONTACT_CONTENT.form.fields.name : "Name"}
                         </label>
                         <Input
                           id="name"
-                          placeholder="Your name"
+                          placeholder={isDataLoaded && lazyData?.CONTACT_CONTENT ? lazyData.CONTACT_CONTENT.form.fields.namePlaceholder : "Your name"}
                           required
                           className="transition-all duration-300 focus:scale-105 bg-background/50"
                         />
                       </div>
                       <div>
                         <label htmlFor="email" className="block text-sm font-medium mb-2">
-                          Email
+                          {isDataLoaded && lazyData?.CONTACT_CONTENT ? lazyData.CONTACT_CONTENT.form.fields.email : "Email"}
                         </label>
                         <Input
                           id="email"
                           type="email"
-                          placeholder="your@email.com"
+                          placeholder={isDataLoaded && lazyData?.CONTACT_CONTENT ? lazyData.CONTACT_CONTENT.form.fields.emailPlaceholder : "your@email.com"}
                           required
                           className="transition-all duration-300 focus:scale-105 bg-background/50"
                         />
@@ -1146,22 +917,22 @@ export default function Portfolio() {
                     </div>
                     <div>
                       <label htmlFor="subject" className="block text-sm font-medium mb-2">
-                        Subject
+                        {isDataLoaded && lazyData?.CONTACT_CONTENT ? lazyData.CONTACT_CONTENT.form.fields.subject : "Subject"}
                       </label>
                       <Input
                         id="subject"
-                        placeholder="Project inquiry"
+                        placeholder={isDataLoaded && lazyData?.CONTACT_CONTENT ? lazyData.CONTACT_CONTENT.form.fields.subjectPlaceholder : "Project inquiry"}
                         required
                         className="transition-all duration-300 focus:scale-105 bg-background/50"
                       />
                     </div>
                     <div>
                       <label htmlFor="message" className="block text-sm font-medium mb-2">
-                        Message
+                        {isDataLoaded && lazyData?.CONTACT_CONTENT ? lazyData.CONTACT_CONTENT.form.fields.message : "Message"}
                       </label>
                       <Textarea
                         id="message"
-                        placeholder="Tell me about your project..."
+                        placeholder={isDataLoaded && lazyData?.CONTACT_CONTENT ? lazyData.CONTACT_CONTENT.form.fields.messagePlaceholder : "Tell me about your project..."}
                         rows={5}
                         required
                         className="transition-all duration-300 focus:scale-105 bg-background/50"
@@ -1175,11 +946,11 @@ export default function Portfolio() {
                       {isFormSubmitting ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Sending...
+                          {isDataLoaded && lazyData?.CONTACT_CONTENT ? lazyData.CONTACT_CONTENT.form.buttons.sending : "Sending..."}
                         </>
                       ) : (
                         <>
-                          Send Message
+                          {isDataLoaded && lazyData?.CONTACT_CONTENT ? lazyData.CONTACT_CONTENT.form.buttons.send : "Send Message"}
                           <Send className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                         </>
                       )}
@@ -1197,12 +968,11 @@ export default function Portfolio() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <p className="text-muted-foreground">
-              © {new Date().getFullYear()} Miliyon Ayalew. All rights reserved. Built with ❤️ using Next.js & Tailwind
-              CSS
+              © {new Date().getFullYear()} {CORE_CONTENT.hero.name}. {CORE_CONTENT.footer.copyright}
             </p>
           </div>
         </div>
       </footer>
     </div>
   )
-}
+} 
