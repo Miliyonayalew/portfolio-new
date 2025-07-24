@@ -154,7 +154,7 @@ export default function Portfolio() {
 
   const projectsCompleted = useAnimatedCounter(30, 1000)
   const clientsSatisfied = useAnimatedCounter(10, 1000)
-  const cupsOfCoffee = useAnimatedCounter(500, 1000)
+  const bugsSquashed = useAnimatedCounter(500, 1000)
   const yearsExperience = useAnimatedCounter(4, 1000)
 
   const aboutSection = useIntersectionObserver(0.3)
@@ -267,9 +267,9 @@ export default function Portfolio() {
   const statsData = useMemo(() => [
     { icon: Award, label: CORE_CONTENT.hero.stats.projectsCompleted, value: projectsCompleted.count, ref: projectsCompleted.ref },
     { icon: Users, label: CORE_CONTENT.hero.stats.happyClients, value: clientsSatisfied.count, ref: clientsSatisfied.ref },
-    { icon: Coffee, label: CORE_CONTENT.hero.stats.cupsOfCoffee, value: cupsOfCoffee.count, ref: cupsOfCoffee.ref },
+    { icon: Coffee, label: "Bugs Squashed", value: bugsSquashed.count, ref: bugsSquashed.ref },
     { icon: Star, label: CORE_CONTENT.hero.stats.yearsExperience, value: yearsExperience.count, ref: yearsExperience.ref },
-  ], [projectsCompleted.count, clientsSatisfied.count, cupsOfCoffee.count, yearsExperience.count, projectsCompleted.ref, clientsSatisfied.ref, cupsOfCoffee.ref, yearsExperience.ref])
+  ], [projectsCompleted.count, clientsSatisfied.count, bugsSquashed.count, yearsExperience.count, projectsCompleted.ref, clientsSatisfied.ref, bugsSquashed.ref, yearsExperience.ref])
 
   return (
     <div className="min-h-screen bg-background text-foreground relative overflow-hidden">
