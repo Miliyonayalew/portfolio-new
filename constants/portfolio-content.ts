@@ -207,7 +207,7 @@ export const SKILLS_CATEGORIES = [
     skills: SKILLS_BY_CATEGORY.testing,
   },
   {
-    title: "DevOps & Tools",
+    title: "Tools & CI/CD",
     description:
       "Implementing CI/CD pipelines and managing cloud infrastructure for optimal performance.",
     category: "tools",

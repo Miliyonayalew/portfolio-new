@@ -142,8 +142,9 @@ export default function Portfolio() {
   const [activeSection, setActiveSection] = useState("home")
   const [isFormSubmitting, setIsFormSubmitting] = useState(false)
   const [formSubmitted, setFormSubmitted] = useState(false)
-  const [currentProjectIndex, setCurrentProjectIndex] = useState(0)
+
   const [currentTestimonialIndex, setCurrentTestimonialIndex] = useState(0)
+  const [currentProjectIndex, setCurrentProjectIndex] = useState(0)
   
   // Lazy-loaded data states
   const [lazyData, setLazyData] = useState<any>(null)
@@ -217,45 +218,51 @@ export default function Portfolio() {
     setTimeout(() => setFormSubmitted(false), 5000)
   }, [])
 
+
+
+  const nextTestimonial = useCallback(() => {
+    if (lazyData?.TESTIMONIALS_DATA?.length) {
+      const totalGroups = Math.ceil(lazyData.TESTIMONIALS_DATA.length / 3)
+      setCurrentTestimonialIndex((prev) => ((Math.floor(prev / 3) + 1) % totalGroups) * 3)
+    }
+  }, [lazyData])
+
   const nextProject = useCallback(() => {
     if (lazyData?.PROJECTS_DATA?.length) {
-      setCurrentProjectIndex((prev) => (prev + 1) % lazyData.PROJECTS_DATA.length)
+      const totalGroups = Math.ceil(lazyData.PROJECTS_DATA.length / 3)
+      setCurrentProjectIndex((prev) => ((Math.floor(prev / 3) + 1) % totalGroups) * 3)
     }
   }, [lazyData])
 
   const prevProject = useCallback(() => {
     if (lazyData?.PROJECTS_DATA?.length) {
-      setCurrentProjectIndex((prev) => (prev - 1 + lazyData.PROJECTS_DATA.length) % lazyData.PROJECTS_DATA.length)
+      const totalGroups = Math.ceil(lazyData.PROJECTS_DATA.length / 3)
+      setCurrentProjectIndex((prev) => ((Math.floor(prev / 3) - 1 + totalGroups) % totalGroups) * 3)
     }
   }, [lazyData])
 
-  const nextTestimonial = useCallback(() => {
-    if (lazyData?.TESTIMONIALS_DATA?.length) {
-      setCurrentTestimonialIndex((prev) => (prev + 1) % lazyData.TESTIMONIALS_DATA.length)
-    }
-  }, [lazyData])
 
-  const prevTestimonial = useCallback(() => {
-    if (lazyData?.TESTIMONIALS_DATA?.length) {
-      setCurrentTestimonialIndex((prev) => (prev - 1 + lazyData.TESTIMONIALS_DATA.length) % lazyData.TESTIMONIALS_DATA.length)
-    }
-  }, [lazyData])
 
-  // Auto-advance project carousel
+  // Auto-advance testimonial carousel with pause on hover/touch
+  const [isTestimonialPaused, setIsTestimonialPaused] = useState(false)
+  
+  // Auto-advance project carousel with pause on hover/touch
+  const [isProjectPaused, setIsProjectPaused] = useState(false)
+  
   useEffect(() => {
-    if (lazyData?.PROJECTS_DATA?.length) {
-      const interval = setInterval(nextProject, 5000)
-      return () => clearInterval(interval)
-    }
-  }, [nextProject, lazyData])
-
-  // Auto-advance testimonial carousel
-  useEffect(() => {
-    if (lazyData?.TESTIMONIALS_DATA?.length) {
+    if (lazyData?.TESTIMONIALS_DATA?.length && !isTestimonialPaused) {
       const interval = setInterval(nextTestimonial, 4000)
       return () => clearInterval(interval)
     }
-  }, [nextTestimonial, lazyData])
+  }, [nextTestimonial, lazyData, isTestimonialPaused])
+
+  // Auto-advance project carousel
+  useEffect(() => {
+    if (lazyData?.PROJECTS_DATA?.length && !isProjectPaused) {
+      const interval = setInterval(nextProject, 3000) // Faster than testimonials
+      return () => clearInterval(interval)
+    }
+  }, [nextProject, lazyData, isProjectPaused])
 
   const statsData = useMemo(() => [
     { icon: Award, label: CORE_CONTENT.hero.stats.projectsCompleted, value: projectsCompleted.count, ref: projectsCompleted.ref },
@@ -581,114 +588,136 @@ export default function Portfolio() {
             </p>
           </div>
 
-          {isDataLoaded && lazyData?.PROJECTS_DATA && (
-            <div className="relative max-w-4xl mx-auto">
-              <div className="overflow-hidden rounded-2xl">
+                    {isDataLoaded && lazyData?.PROJECTS_DATA && (
+            <div className="relative max-w-5xl mx-auto">
+              {/* Projects Carousel */}
+              <div 
+                className="overflow-hidden"
+                onMouseEnter={() => setIsProjectPaused(true)}
+                onMouseLeave={() => setIsProjectPaused(false)}
+                onTouchStart={() => setIsProjectPaused(true)}
+                onTouchEnd={() => {
+                  // Resume after a delay on mobile to allow for touch interactions
+                  setTimeout(() => setIsProjectPaused(false), 2000)
+                }}
+              >
                 <div
-                  className="flex transition-transform duration-500 ease-in-out"
-                  style={{ transform: `translateX(-${currentProjectIndex * 100}%)` }}
+                  className="flex transition-transform duration-700 ease-in-out"
+                  style={{ transform: `translateX(-${Math.floor(currentProjectIndex / 3) * 100}%)` }}
                 >
-                  {lazyData.PROJECTS_DATA.map((project: any, index: number) => (
-                    <div key={index} className="w-full flex-shrink-0">
-                      <Card className="group hover:shadow-2xl transition-all duration-500 overflow-hidden bg-card/50 backdrop-blur-sm border-primary/20 mx-4">
-                        <div className="grid md:grid-cols-2 gap-0">
-                          <div className="relative overflow-hidden h-64 md:h-auto">
+                  {Array.from({ length: Math.ceil(lazyData.PROJECTS_DATA.length / 3) }).map((_, groupIndex) => (
+                    <div key={groupIndex} className="w-full flex-shrink-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
+                      {lazyData.PROJECTS_DATA.slice(groupIndex * 3, groupIndex * 3 + 3).map((project: any, index: number) => (
+                        <Card key={index} className="group hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden bg-card/50 backdrop-blur-sm border-primary/20">
+                          <div className="relative overflow-hidden h-48">
                             <Image
-                              src={project.image || "/placeholder.svg"}
+                              src={project.image || "/placeholder.jpg"}
                               alt={project.title}
                               width={400}
                               height={300}
                               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.src = "/placeholder.jpg";
+                              }}
                             />
                             {project.featured && (
                               <Badge className="absolute top-4 left-4 bg-gradient-to-r from-blue-500 to-purple-600">
                                 {lazyData.PROJECT_CONTENT?.featuredBadge || "Featured"}
                               </Badge>
                             )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
+                              <div className="flex space-x-2">
+                                <Button size="sm" variant="secondary" asChild>
+                                  <Link href={project.github}>
+                                    <Github className="h-4 w-4" />
+                                  </Link>
+                                </Button>
+                                <Button size="sm" variant="secondary" asChild>
+                                  <Link href={project.live}>
+                                    <ExternalLink className="h-4 w-4" />
+                                  </Link>
+                                </Button>
+                              </div>
+                            </div>
                           </div>
 
-                          <div className="p-8 flex flex-col justify-center">
+                          <CardContent className="p-6">
                             <CardHeader className="p-0 mb-4">
-                              <CardTitle className="text-2xl group-hover:text-primary transition-colors duration-300">
+                              <CardTitle className="text-xl group-hover:text-primary transition-colors duration-300 line-clamp-1">
                                 {project.title}
                               </CardTitle>
-                              <CardDescription className="text-base">{project.description}</CardDescription>
+                              <CardDescription className="text-sm line-clamp-2">{project.description}</CardDescription>
                             </CardHeader>
 
-                            <CardContent className="p-0 space-y-6">
-                              <div className="flex flex-wrap gap-2">
-                                {project.tech.map((tech: string) => (
+                            <div className="space-y-4">
+                              <div className="flex flex-wrap gap-1">
+                                {project.tech.slice(0, 3).map((tech: string) => (
                                   <Badge
                                     key={tech}
                                     variant="outline"
-                                    className="transition-all duration-300 hover:scale-105"
+                                    className="text-xs transition-all duration-300 hover:scale-105"
                                   >
                                     {tech}
                                   </Badge>
                                 ))}
+                                {project.tech.length > 3 && (
+                                  <Badge variant="outline" className="text-xs">
+                                    +{project.tech.length - 3}
+                                  </Badge>
+                                )}
                               </div>
 
                               {project.stats && (
-                                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/50">
-                                  {Object.entries(project.stats).map(([key, value]) => (
+                                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border/50">
+                                  {Object.entries(project.stats).slice(0, 2).map(([key, value]) => (
                                     <div key={key} className="text-center">
-                                      <div className="font-semibold text-primary text-lg">{value as string}</div>
-                                      <div className="text-sm text-muted-foreground capitalize">{key}</div>
+                                      <div className="font-semibold text-primary text-sm">{value as string}</div>
+                                      <div className="text-xs text-muted-foreground capitalize">{key}</div>
                                     </div>
                                   ))}
                                 </div>
                               )}
 
-                              <div className="flex space-x-4 pt-4">
-                                <Button variant="outline" size="sm" asChild className="flex-1 bg-transparent">
+                              <div className="flex space-x-2 pt-2">
+                                <Button variant="outline" size="sm" asChild className="flex-1 bg-transparent text-xs">
                                   <Link href={project.github}>
-                                    <Github className="h-4 w-4 mr-2" />
+                                    <Github className="h-3 w-3 mr-1" />
                                     {lazyData.PROJECT_CONTENT?.buttons?.code || "Code"}
                                   </Link>
                                 </Button>
-                                <Button size="sm" asChild className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600">
+                                <Button size="sm" asChild className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-xs">
                                   <Link href={project.live}>
-                                    <ExternalLink className="h-4 w-4 mr-2" />
-                                    {lazyData.PROJECT_CONTENT?.buttons?.liveDemo || "Live Demo"}
+                                    <ExternalLink className="h-3 w-3 mr-1" />
+                                    Demo
                                   </Link>
                                 </Button>
                               </div>
-                            </CardContent>
-                          </div>
-                        </div>
-                      </Card>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
                     </div>
                   ))}
                 </div>
               </div>
 
-              <Button
-                variant="outline"
-                size="icon"
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-background/80 backdrop-blur-sm border-primary/20 hover:bg-primary/10"
-                onClick={prevProject}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-background/80 backdrop-blur-sm border-primary/20 hover:bg-primary/10"
-                onClick={nextProject}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-
+              {/* Navigation Dots */}
               <div className="flex justify-center space-x-2 mt-8">
-                {lazyData.PROJECTS_DATA.map((_: any, index: number) => (
+                {Array.from({ length: Math.ceil(lazyData.PROJECTS_DATA.length / 3) }).map((_, groupIndex) => (
                   <button
-                    key={index}
+                    key={groupIndex}
                     className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                      index === currentProjectIndex
+                      Math.floor(currentProjectIndex / 3) === groupIndex
                         ? "bg-gradient-to-r from-blue-500 to-purple-600 scale-125"
                         : "bg-muted hover:bg-muted-foreground/50"
                     }`}
-                    onClick={() => setCurrentProjectIndex(index)}
+                    onClick={() => {
+                      setCurrentProjectIndex(groupIndex * 3)
+                      // Briefly pause auto-advance when user manually selects a project group
+                      setIsProjectPaused(true)
+                      setTimeout(() => setIsProjectPaused(false), 2000)
+                    }}
                   />
                 ))}
               </div>
@@ -734,75 +763,59 @@ export default function Portfolio() {
 
           {isDataLoaded && lazyData?.TESTIMONIALS_DATA && (
             <div className="relative max-w-4xl mx-auto">
-              <div className="overflow-hidden">
+              <div 
+                className="overflow-hidden"
+                onMouseEnter={() => setIsTestimonialPaused(true)}
+                onMouseLeave={() => setIsTestimonialPaused(false)}
+                onTouchStart={() => setIsTestimonialPaused(true)}
+                onTouchEnd={() => {
+                  // Resume after a delay on mobile to allow for touch interactions
+                  setTimeout(() => setIsTestimonialPaused(false), 3000)
+                }}
+              >
                 <div
                   className="flex transition-transform duration-500 ease-in-out"
-                  style={{ transform: `translateX(-${currentTestimonialIndex * 100}%)` }}
+                  style={{ transform: `translateX(-${Math.floor(currentTestimonialIndex / 3) * 100}%)` }}
                 >
-                  {lazyData.TESTIMONIALS_DATA.map((testimonial: any, index: number) => (
-                    <div key={index} className="w-full flex-shrink-0 px-4">
-                      <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:shadow-xl transition-all duration-300">
-                        <CardContent className="p-8 text-center">
-                          <Quote className="h-12 w-12 text-primary mx-auto mb-6 opacity-50" />
+                  {Array.from({ length: Math.ceil(lazyData.TESTIMONIALS_DATA.length / 3) }).map((_, groupIndex) => (
+                    <div key={groupIndex} className="w-full flex-shrink-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
+                      {lazyData.TESTIMONIALS_DATA.slice(groupIndex * 3, groupIndex * 3 + 3).map((testimonial: any, index: number) => (
+                        <Card key={index} className="bg-card/50 backdrop-blur-sm border-primary/20 hover:shadow-xl transition-all duration-300">
+                          <CardContent className="p-6 text-center">
+                            <Quote className="h-8 w-8 text-primary mx-auto mb-4 opacity-50" />
 
-                          <blockquote className="text-lg text-muted-foreground leading-relaxed mb-8 italic">
-                            "{testimonial.content}"
-                          </blockquote>
+                            <blockquote className="text-sm text-muted-foreground leading-relaxed mb-6 italic line-clamp-4">
+                              "{testimonial.content}"
+                            </blockquote>
 
-                          <div className="flex items-center justify-center space-x-4">
-                            <Image
-                              src={testimonial.image || "/placeholder.svg"}
-                              alt={testimonial.name}
-                              width={60}
-                              height={60}
-                              className="rounded-full border-2 border-primary/20"
-                            />
-                            <div className="text-left">
+                                                         <div className="text-center space-y-2">
                               <div className="font-semibold text-foreground">{testimonial.name}</div>
-                              <div className="text-sm text-muted-foreground">{testimonial.role}</div>
-                              <div className="text-sm text-primary font-medium">{testimonial.company}</div>
+                              <div className="text-xs text-muted-foreground">{testimonial.role}</div>
+                              <div className="text-xs text-primary font-medium">{testimonial.company}</div>
                             </div>
-                          </div>
-
-                          <div className="flex justify-center space-x-1 mt-4">
-                            {[...Array(testimonial.rating)].map((_, i) => (
-                              <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
+                          </CardContent>
+                        </Card>
+                      ))}
                     </div>
                   ))}
                 </div>
               </div>
 
-              <Button
-                variant="outline"
-                size="icon"
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-background/80 backdrop-blur-sm border-primary/20 hover:bg-primary/10"
-                onClick={prevTestimonial}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-background/80 backdrop-blur-sm border-primary/20 hover:bg-primary/10"
-                onClick={nextTestimonial}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-
               <div className="flex justify-center space-x-2 mt-8">
-                {lazyData.TESTIMONIALS_DATA.map((_: any, index: number) => (
+                {Array.from({ length: Math.ceil(lazyData.TESTIMONIALS_DATA.length / 3) }).map((_, groupIndex) => (
                   <button
-                    key={index}
+                    key={groupIndex}
                     className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                      index === currentTestimonialIndex
+                      Math.floor(currentTestimonialIndex / 3) === groupIndex
                         ? "bg-gradient-to-r from-blue-500 to-purple-600 scale-125"
                         : "bg-muted hover:bg-muted-foreground/50"
                     }`}
-                    onClick={() => setCurrentTestimonialIndex(index)}
+                    onClick={() => {
+                      setCurrentTestimonialIndex(groupIndex * 3)
+                      // Briefly pause auto-advance when user manually selects a testimonial group
+                      setIsTestimonialPaused(true)
+                      setTimeout(() => setIsTestimonialPaused(false), 2000)
+                    }}
                   />
                 ))}
               </div>
