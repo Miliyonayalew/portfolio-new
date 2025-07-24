@@ -6,15 +6,15 @@
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
+    --card: 0 0% 98%;
     --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
+    --popover: 0 0% 98%;
     --popover-foreground: 222.2 84% 4.9%;
     --primary: 221.2 83.2% 53.3%;
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96%;
     --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96%;
+    --muted: 210 40% 94%;
     --muted-foreground: 215.4 16.3% 46.9%;
     --accent: 210 40% 96%;
     --accent-foreground: 222.2 84% 4.9%;
@@ -68,21 +68,32 @@
       color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
-  /* Comprehensive theme transition support */
+  /* Optimized theme transition support - only essential properties */
   *,
   *::before,
   *::after {
     transition: 
-      background-color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      border-color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      fill 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      stroke 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      filter 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      backdrop-filter 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+      color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Faster transitions for system theme changes */
+  html[class*="dark"],
+  html[class*="light"] {
+    transition: none;
+  }
+
+  html[class*="dark"] *,
+  html[class*="light"] *,
+  html[class*="dark"] *::before,
+  html[class*="light"] *::before,
+  html[class*="dark"] *::after,
+  html[class*="light"] *::after {
+    transition: 
+      background-color 0.1s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.1s cubic-bezier(0.4, 0, 0.2, 1),
+      color 0.1s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* Preserve intentional transitions and animations */
@@ -120,24 +131,29 @@
     animation: fadeInRight 0.8s ease-out forwards;
   }
 
-  /* Enhanced theme transition utilities */
+  /* Optimized theme transition utilities */
   .theme-transition {
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .theme-transition-colors {
     transition: 
-      background-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      border-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+      color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .theme-icon-transition {
     transition: 
-      opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      rotate 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      scale 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+      rotate 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+      scale 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Instant theme changes for system theme */
+  .theme-instant {
+    transition: none !important;
   }
 
   /* Line clamp utilities */
@@ -351,6 +367,68 @@ html {
 
 :root {
   color-scheme: light;
+}
+
+/* Enhanced light mode styling */
+:root {
+  /* Subtle shadows for light mode */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+/* Light mode specific card enhancements */
+:root .bg-card {
+  background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--card) / 0.95) 100%);
+  backdrop-filter: blur(10px);
+}
+
+/* Enhanced light mode gradients */
+:root .bg-gradient-to-r {
+  background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+:root .from-blue-500\/10 {
+  --tw-gradient-from: rgb(59 130 246 / 0.1);
+  --tw-gradient-to: rgb(59 130 246 / 0);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+:root .to-purple-600\/10 {
+  --tw-gradient-to: rgb(147 51 234 / 0.1);
+}
+
+/* Light mode backdrop blur enhancements */
+:root .backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+}
+
+:root .backdrop-blur-md {
+  backdrop-filter: blur(12px);
+}
+
+:root .backdrop-blur-xl {
+  backdrop-filter: blur(24px);
+}
+
+/* Enhanced light mode borders */
+:root .border-border\/50 {
+  border-color: hsl(var(--border) / 0.5);
+}
+
+/* Light mode hover effects */
+:root .hover\:bg-primary\/5:hover {
+  background-color: hsl(var(--primary) / 0.05);
+}
+
+:root .hover\:bg-primary\/10:hover {
+  background-color: hsl(var(--primary) / 0.1);
+}
+
+:root .hover\:bg-accent\/50:hover {
+  background-color: hsl(var(--accent) / 0.5);
 }
 
 /* Reduce motion for users who prefer it */

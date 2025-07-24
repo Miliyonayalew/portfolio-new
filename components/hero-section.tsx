@@ -4,6 +4,7 @@ import { ExternalLink, Send, Download, Github, Linkedin, Mail, ChevronDown, Awar
 import Image from "next/image"
 import Link from "next/link"
 import { AnimatedBackground } from "./animated-background"
+import { handleResumeAction } from "@/constants/resume-config"
 
 interface Stat {
   icon: React.ElementType
@@ -163,7 +164,12 @@ const HeroSection: React.FC<HeroSectionProps> = ({ typedText, statsData, scrollT
                 {CORE_CONTENT.hero.buttons.getInTouch}
                 <Send className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
-              <Button variant="ghost" size="lg" className="group transition-all duration-300 hover:scale-105">
+              <Button 
+                variant="ghost" 
+                size="lg" 
+                className="group transition-all duration-300 hover:scale-105"
+                onClick={handleResumeAction}
+              >
                 <Download className="mr-2 h-4 w-4 transition-transform group-hover:translate-y-1" />
                 {CORE_CONTENT.hero.buttons.resume}
               </Button>
