@@ -86,7 +86,7 @@ export const SKILLS_CATEGORIES = [
     skills: RAW_SKILLS.filter((skill) => skill.category === "testing"),
   },
   {
-    title: "DevOps & Tools",
+    title: "Tools & CI/CD",
     description:
       "Implementing CI/CD pipelines and managing cloud infrastructure for optimal performance.",
     category: "tools",
@@ -140,6 +140,28 @@ export const PROJECTS_DATA = [
     featured: false,
     stats: { properties: "2K+", views: "100K+" },
   },
+  {
+    title: "AI Content Generator",
+    description:
+      "AI-powered content creation platform with multiple templates and export options.",
+    image: "/placeholder.svg?height=200&width=300",
+    tech: ["Python", "FastAPI", "OpenAI API", "React"],
+    github: "#",
+    live: "#",
+    featured: false,
+    stats: { content: "1M+", users: "5K+" },
+  },
+  {
+    title: "Real Estate Platform",
+    description:
+      "Modern real estate platform with virtual tours, mortgage calculator, and agent dashboard.",
+    image: "/placeholder.svg?height=200&width=300",
+    tech: ["Next.js", "Three.js", "Prisma", "Stripe"],
+    github: "#",
+    live: "#",
+    featured: false,
+    stats: { properties: "2K+", views: "100K+" },
+  },
 ];
 
 // Project-related content
@@ -154,39 +176,39 @@ export const PROJECT_CONTENT = {
 // Testimonials data
 export const TESTIMONIALS_DATA = [
   {
-    name: "Sarah Johnson",
-    role: "Product Manager",
-    company: "10 Academy",
+    name: "Oscar Fernández Muñoz",
+    role: "Full Stack Developer",
+    company: "Microverse",
     image: "/placeholder.svg?height=80&width=80",
     content:
-      "Miliyon's work on our AI-driven assignment system was exceptional. His ability to integrate complex AI features while maintaining excellent user experience is remarkable. The 50% reduction in grading time speaks volumes about his technical expertise.",
+      "I had the pleasure of pair-programming with Miliyon during Microverse. He's detail-oriented, writes clean, accessible code, and consistently looks for UI improvements. On top of that, he's approachable and easy to collaborate with. Highly recommended!",
     rating: 5,
   },
   {
-    name: "David Chen",
-    role: "CTO",
-    company: "Ibex Technology",
+    name: "Cesar Valencia Aguilar",
+    role: "Full Stack Developer",
+    company: "Microverse",
     image: "/placeholder.svg?height=80&width=80",
     content:
-      "Working with Miliyon was a game-changer for our commodity distribution platform. His full-stack expertise and attention to detail helped us deliver a robust solution that improved our efficiency by 20%. Highly recommended!",
+      "Miliyon is punctual, knowledgeable, and always willing to help. His deep understanding of JavaScript, Ruby, React, and Redux made working with him a great experience.",
     rating: 5,
   },
   {
-    name: "Maria Rodriguez",
-    role: "Senior Developer",
-    company: "TechStart Inc.",
+    name: "Matias Belete",
+    role: "Data Scientist & Lecturer",
+    company: "Haramaya University",
     image: "/placeholder.svg?height=80&width=80",
     content:
-      "Miliyon's mentoring at Microverse was invaluable. His code reviews were thorough and his guidance helped me become a better developer. His passion for teaching and sharing knowledge is truly inspiring.",
+      "Miliyon is a skilled and passionate developer. During our time at Haramaya University, he showed strong problem-solving abilities and was a supportive team player. I'd gladly work with him again.",
     rating: 5,
   },
   {
-    name: "Ahmed Hassan",
-    role: "Project Lead",
-    company: "Digital Solutions",
+    name: "Jonathan Kayizzi",
+    role: "Software Engineer",
+    company: "Microverse",
     image: "/placeholder.svg?height=80&width=80",
     content:
-      "The multilingual dashboard Miliyon built for us exceeded all expectations. His expertise in React and TypeScript, combined with his understanding of user experience, delivered exactly what we needed.",
+      "I collaborated with Miliyon on a React project at Microverse. He has solid JavaScript skills and confidently contributes valuable ideas.",
     rating: 5,
   },
 ];
