@@ -25,7 +25,7 @@ const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
 }) => {
   return (
     <section className="py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
             {CORE_CONTENT.sections.testimonials.title}
@@ -73,7 +73,8 @@ const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
               {lazyData.TESTIMONIALS_DATA.map((_: any, index: number) => (
                 <button
                   key={index}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  aria-label={`Go to testimonial ${index + 1}`}
+                  className={`w-6 h-6 rounded-full transition-all duration-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary/60 ${
                     index === currentTestimonialIndex
                       ? "bg-gradient-to-r from-blue-500 to-purple-600 scale-125"
                       : "bg-muted hover:bg-muted-foreground/50"
@@ -88,7 +89,7 @@ const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
             </div>
           </div>
         )}
-      </div>
+      </main>
     </section>
   )
 }

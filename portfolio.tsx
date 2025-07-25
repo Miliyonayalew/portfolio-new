@@ -550,6 +550,7 @@ export default function Portfolio() {
               <ThemeToggle />
               <button
                 className="md:hidden transition-transform duration-300 hover:scale-110"
+                aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
               >
                 {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}

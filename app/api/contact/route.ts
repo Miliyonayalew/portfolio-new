@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
       from: process.env.EMAIL_USER,
       to: "miliayalew@gmail.com",
       subject: subject || "New Contact Form Submission",
-      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+      text: `Portfolio Contact Form Submission\nName: ${name}\nEmail: ${email}\nMessage: ${message}`,
       html: `<p><b>Name:</b> ${name}</p><p><b>Email:</b> ${email}</p><p><b>Message:</b><br/>${message}</p>`,
     };
 

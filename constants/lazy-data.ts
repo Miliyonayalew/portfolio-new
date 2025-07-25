@@ -105,7 +105,6 @@ export const PROJECTS_DATA = [
     github: "https://github.com/Miliyonayalew/Marriott-Reservation-Backend",
     live: "https://marriott-reservation.netlify.app",
     featured: false,
-    stats: { users: "10K+", revenue: "$500K+" },
   },
   {
     title: "Space Traveler's Hub",
@@ -116,7 +115,6 @@ export const PROJECTS_DATA = [
     github: "https://github.com/Miliyonayalew/space-travelers-hub",
     live: "https://rad-cat-cbc90c.netlify.app/",
     featured: false,
-    stats: { teams: "200+", tasks: "50K+" },
   },
   {
     title: "Crypto-App",
@@ -127,7 +125,6 @@ export const PROJECTS_DATA = [
     github: "https://github.com/Miliyonayalew/crypto-app",
     live: "https://poetic-lokum-2abf1e.netlify.app/",
     featured: false,
-    stats: { content: "1M+", users: "5K+" },
   },
   {
     title: "Tv Show",
@@ -138,7 +135,6 @@ export const PROJECTS_DATA = [
     github: "https://github.com/Miliyonayalew/Capstone-II",
     live: "https://jfoyarzo.github.io/Capstone-II/",
     featured: false,
-    stats: { properties: "2K+", views: "100K+" },
   },
   {
     title: "TenxSaaS Apply",
@@ -149,7 +145,6 @@ export const PROJECTS_DATA = [
     github: "#",
     live: "https://apply.10academy.org/",
     featured: false,
-    stats: { content: "100K+", users: "15K+" },
   },
   {
     title: "Tenx E-Learning",
@@ -160,7 +155,6 @@ export const PROJECTS_DATA = [
     github: "#",
     live: "http://tenx.10academy.org/",
     featured: false,
-    stats: { content: "200K+", users: "20K+" },
   },
   {
     title: "Food Delivery App",
@@ -171,7 +165,6 @@ export const PROJECTS_DATA = [
     github: "#",
     live: "#",
     featured: true,
-    stats: { content: "100K+", users: "15K+" },
   },
 ];
 

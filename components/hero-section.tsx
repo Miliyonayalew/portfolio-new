@@ -199,7 +199,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ typedText, statsData, scrollT
             <div className="relative w-80 h-80 mx-auto group">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full animate-pulse opacity-20 group-hover:opacity-30 transition-opacity duration-300 blur-xl"></div>
               <Image
-                src="/miliyon.png"
+                src="/miliyon.webp"
                 alt="Miliyon Ayalew"
                 width={320}
                 height={320}
