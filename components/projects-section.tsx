@@ -2,9 +2,9 @@ import React from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight, Github, ExternalLink } from "lucide-react"
+import { ChevronLeft, ChevronRight, Github, ExternalLink as LucideExternalLink } from "lucide-react"
 import Image from "next/image"
-import Link from "next/link"
+import ExternalLink from "./external-link"
 import SectionBackground from "./section-background"
 
 interface ProjectsSectionProps {
@@ -89,7 +89,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   return (
     <section id="projects" className="py-20 relative overflow-hidden">
       <SectionBackground color="from-pink-500/10 via-yellow-500/10 to-orange-500/10" particleCount={16} />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div
           ref={projectsSection.ref}
           className={`text-center mb-16 transition-all duration-1000 ${
@@ -154,14 +154,14 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4 pointer-events-none">
                             <div className="flex space-x-2">
                               <Button size="sm" variant="secondary" asChild>
-                                <Link href={project.github}>
+                                <ExternalLink href={project.github} aria-label={`View code for ${project.title}`}>
                                   <Github className="h-4 w-4" />
-                                </Link>
+                                </ExternalLink>
                               </Button>
                               <Button size="sm" variant="secondary" asChild>
-                                <Link href={project.live}>
-                                  <ExternalLink className="h-4 w-4" />
-                                </Link>
+                                <ExternalLink href={project.live} aria-label={`View demo for ${project.title}`}>
+                                  <LucideExternalLink className="h-4 w-4" />
+                                </ExternalLink>
                               </Button>
                             </div>
                           </div>
@@ -203,16 +203,16 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                               <div className="flex-1" />
                               <div className="flex space-x-2 pt-2 mt-auto">
                                 <Button variant="outline" size="sm" asChild className="flex-1 bg-transparent text-xs">
-                                  <Link href={project.github}>
+                                  <ExternalLink href={project.github} aria-label={`View code for ${project.title}`}>
                                     <Github className="h-3 w-3 mr-1" />
                                     {lazyData.PROJECT_CONTENT?.buttons?.code || "Code"}
-                                  </Link>
+                                  </ExternalLink>
                                 </Button>
                                 <Button size="sm" asChild className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-xs">
-                                  <Link href={project.live}>
-                                    <ExternalLink className="h-3 w-3 mr-1" />
+                                  <ExternalLink href={project.live} aria-label={`View demo for ${project.title}`}>
+                                    <LucideExternalLink className="h-3 w-3 mr-1" />
                                     Demo
-                                  </Link>
+                                  </ExternalLink>
                                 </Button>
                               </div>
                             </div>
@@ -231,7 +231,8 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
               {lazyData.PROJECTS_DATA.map((_: any, idx: number) => (
                 <button
                   key={idx}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  aria-label={`Go to project ${idx + 1}`}
+                  className={`w-6 h-6 rounded-full transition-all duration-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary/60 ${
                     (carouselIndex - visibleCount + lazyData.PROJECTS_DATA.length) % lazyData.PROJECTS_DATA.length === idx
                       ? "bg-gradient-to-r from-blue-500 to-purple-600 scale-125"
                       : "bg-muted hover:bg-muted-foreground/50"
@@ -246,7 +247,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
             </div>
           </div>
         )}
-      </div>
+      </main>
     </section>
   )
 }

@@ -17,9 +17,9 @@ export const metadata: Metadata = {
   keywords: ["portfolio", "full stack developer", "web development", "React", "Next.js"],
   authors: [{ name: "Miliyon Ayalew" }],
   icons: {
-    icon: '/miliyon.png',
-    shortcut: '/miliyon.png',
-    apple: '/miliyon.png',
+    icon: '/miliyon.webp',
+    shortcut: '/miliyon.webp',
+    apple: '/miliyon.webp',
   },
 }
 
@@ -65,7 +65,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.className} font-sans antialiased`}>
+      <body className={`${inter.className} font-sans antialiased`} suppressHydrationWarning>
         <ThemeProvider>
           {children}
         </ThemeProvider>
