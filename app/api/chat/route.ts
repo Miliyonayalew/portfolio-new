@@ -4,9 +4,10 @@ import { generateSystemPrompt } from "@/constants/chatbot-data";
 // Initialize the Gemini AI client
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
-// CORS headers
+// CORS headers - from environment variable
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin":
+    process.env.ALLOWED_ORIGIN || "https://miliyon-ayalew.netlify.app",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
@@ -20,6 +21,15 @@ export async function OPTIONS() {
 
 export async function POST(req: Request) {
   try {
+    // Debug: Log the origin of the request
+    const origin = req.headers.get("origin");
+    console.log("Request origin:", origin);
+    console.log("Environment ALLOWED_ORIGIN:", process.env.ALLOWED_ORIGIN);
+    console.log(
+      "Final allowed origin:",
+      corsHeaders["Access-Control-Allow-Origin"]
+    );
+
     // Parse the request body to get the messages
     const { messages } = await req.json();
 
