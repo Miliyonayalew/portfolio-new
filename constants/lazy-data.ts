@@ -140,7 +140,7 @@ export const PROJECTS_DATA = [
     title: "TenxSaaS Apply",
     description:
       "A SaaS application for Tenx to manage their applicants and their applications.",
-    image: "/apply.png?height=200&width=300",
+    image: "/apply.webp?height=200&width=300",
     tech: ["React", "Redux", "Strapi", "AntD", "PostgreSQL"],
     github: "#",
     live: "https://apply.10academy.org/",
@@ -150,7 +150,7 @@ export const PROJECTS_DATA = [
     title: "Tenx E-Learning",
     description:
       "A SaaS application for Tenx to manage their e-learning platform.",
-    image: "/tenx.png?height=200&width=300",
+    image: "/tenx.webp?height=200&width=300",
     tech: ["React", "Redux", "Strapi", "AntD", "PostgreSQL"],
     github: "#",
     live: "http://tenx.10academy.org/",
