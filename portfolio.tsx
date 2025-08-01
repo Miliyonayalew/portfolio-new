@@ -53,6 +53,7 @@ import ProjectsSection from './components/projects-section'
 import ExperienceSection from './components/experience-section'
 import TestimonialsSection from './components/testimonials-section'
 import ContactSection from './components/contact-section'
+import Chatbot from './components/chatbot'
 // Remove: import { useForm } from '@formspree/react'
 
 // Custom hooks
@@ -676,6 +677,9 @@ export default function Portfolio() {
           </div>
         </div>
       </footer>
+
+      {/* Chatbot */}
+      <Chatbot />
     </div>
   )
 }
