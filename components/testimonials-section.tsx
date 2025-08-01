@@ -1,6 +1,7 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Quote } from "lucide-react"
+import Marquee from "react-fast-marquee"
 
 interface TestimonialsSectionProps {
   CORE_CONTENT: any
@@ -36,56 +37,52 @@ const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
         </div>
 
         {isClient && isDataLoaded && lazyData?.TESTIMONIALS_DATA && (
-          <div className="relative max-w-4xl mx-auto">
-            <div 
-              className="overflow-hidden"
-              onMouseEnter={() => setIsTestimonialPaused(true)}
-              onMouseLeave={() => setIsTestimonialPaused(false)}
-              onTouchStart={() => setIsTestimonialPaused(true)}
-              onTouchEnd={() => {
-                setTimeout(() => setIsTestimonialPaused(false), 3000)
-              }}
-            >
-              <div
-                className="flex transition-transform duration-500 ease-in-out"
-                style={{ transform: `translateX(-${currentTestimonialIndex * 100}%)` }}
+          <div className="relative max-w-5xl mx-auto">
+            {/* Left gradient shadow */}
+            <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-background via-background/80 to-transparent z-10 pointer-events-none" />
+            
+            {/* Right gradient shadow */}
+            <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-background via-background/80 to-transparent z-10 pointer-events-none" />
+            
+            <div className="overflow-hidden rounded-lg cursor-pointer relative">
+              <Marquee
+                speed={30}
+                pauseOnHover={true}
+                pauseOnClick={false}
+                gradient={false}
+                gradientWidth={0}
+                direction="left"
+                delay={0}
+                loop={0}
+                className="py-4"
               >
                 {lazyData.TESTIMONIALS_DATA.map((testimonial: any, index: number) => (
-                  <div key={index} className="w-full flex-shrink-0 px-4">
-                    <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:shadow-xl transition-all duration-300">
-                      <CardContent className="p-8 text-center">
-                        <Quote className="h-8 w-8 text-primary mx-auto mb-4 opacity-50" />
-                        <blockquote className="text-lg text-muted-foreground leading-relaxed mb-8 italic">
+                  <div 
+                    key={`testimonial-${index}`} 
+                    className="w-80 flex-shrink-0 px-4"
+                  >
+                    <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group h-full cursor-pointer">
+                      <CardContent className="p-6 text-center">
+                        <Quote className="h-6 w-6 text-primary mx-auto mb-3 opacity-50 group-hover:scale-105 group-hover:opacity-75 transition-all duration-300" />
+                        <blockquote className="text-sm text-muted-foreground leading-relaxed mb-4 italic group-hover:text-foreground transition-colors duration-300 line-clamp-4">
                           "{testimonial.content}"
                         </blockquote>
-                        <div className="text-center space-y-2">
-                          <div className="font-semibold text-foreground">{testimonial.name}</div>
-                          <div className="text-xs text-muted-foreground">{testimonial.role}</div>
-                          <div className="text-xs text-primary font-medium">{testimonial.company}</div>
+                        <div className="text-center space-y-1">
+                          <div className="font-semibold text-foreground group-hover:text-primary transition-colors duration-300 text-sm">
+                            {testimonial.name}
+                          </div>
+                          <div className="text-xs text-muted-foreground group-hover:text-muted-foreground/80 transition-colors duration-300">
+                            {testimonial.role}
+                          </div>
+                          <div className="text-xs text-primary font-medium group-hover:text-blue-600 transition-colors duration-300">
+                            {testimonial.company}
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
                   </div>
                 ))}
-              </div>
-            </div>
-            <div className="flex justify-center space-x-2 mt-8">
-              {lazyData.TESTIMONIALS_DATA.map((_: any, index: number) => (
-                <button
-                  key={index}
-                  aria-label={`Go to testimonial ${index + 1}`}
-                  className={`w-6 h-6 rounded-full transition-all duration-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary/60 ${
-                    index === currentTestimonialIndex
-                      ? "bg-gradient-to-r from-blue-500 to-purple-600 scale-125"
-                      : "bg-muted hover:bg-muted-foreground/50"
-                  }`}
-                  onClick={() => {
-                    setCurrentTestimonialIndex(index)
-                    setIsTestimonialPaused(true)
-                    setTimeout(() => setIsTestimonialPaused(false), 2000)
-                  }}
-                />
-              ))}
+              </Marquee>
             </div>
           </div>
         )}
