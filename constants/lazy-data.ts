@@ -140,7 +140,7 @@ export const PROJECTS_DATA = [
     title: "TenxSaaS Apply",
     description:
       "A SaaS application for Tenx to manage their applicants and their applications.",
-    image: "/placeholder.svg?height=200&width=300",
+    image: "/apply.webp?height=200&width=300",
     tech: ["React", "Redux", "Strapi", "AntD", "PostgreSQL"],
     github: "#",
     live: "https://apply.10academy.org/",
@@ -150,7 +150,7 @@ export const PROJECTS_DATA = [
     title: "Tenx E-Learning",
     description:
       "A SaaS application for Tenx to manage their e-learning platform.",
-    image: "/placeholder.svg?height=200&width=300",
+    image: "/tenx.webp?height=200&width=300",
     tech: ["React", "Redux", "Strapi", "AntD", "PostgreSQL"],
     github: "#",
     live: "http://tenx.10academy.org/",
@@ -236,11 +236,9 @@ export const EXPERIENCE_DATA = [
     description:
       "Developing user interfaces and implementing front-end logic for web applications. Collaborating with designers and back-end developers to deliver high-quality products.",
     achievements: [
-      "Developed and maintained responsive web applications using React and related technologies.",
-      "Collaborated with designers to implement UI/UX designs and ensure a seamless user experience.",
-      "Participated in code reviews and contributed to improving code quality and maintainability.",
-      "Integrated front-end components with back-end APIs and data sources.",
-      "Implemented testing strategies to ensure the reliability and performance of web applications.",
+      "Integrated an AI-driven assignment system with chatbot and real-time analytics, cutting grading time by 50% and supporting 10k+ users efficiently.",
+      "Developed reusable UI components with Ant Design and TailwindCSS, speeding up development by 40% and ensuring accessibility across devices.",
+      "Built advanced content and performance tracking features with personalized learning paths, interactive dashboards, and automated end-to-end tests using Playwright",
     ],
   },
   {
@@ -251,11 +249,9 @@ export const EXPERIENCE_DATA = [
     description:
       "Assisted senior developers in building and maintaining web applications. Gained experience in front-end development and software engineering best practices.",
     achievements: [
-      "Assisted in the development of new features and enhancements for existing web applications.",
-      "Participated in code reviews and learned about software engineering best practices.",
-      "Contributed to the improvement of code quality and maintainability.",
-      "Worked with a team of developers to deliver high-quality products.",
-      "Gained experience in front-end development and software engineering.",
+      "Designed dynamic workflows for skill assessments and applications in TenX Apply, simplifying onboarding and boosting completion rates by 75%.",
+      "Implemented multi-step, user-friendly assessment creation interfaces that reduced setup time for career teams by over 60%",
+      "Built interactive review components with real-time feedback to improve applicant experience and reduce support requests",
     ],
   },
   {
@@ -266,11 +262,9 @@ export const EXPERIENCE_DATA = [
     description:
       "Developed and maintained full-stack web applications using modern technologies. Collaborated with designers and product managers to deliver high-quality products.",
     achievements: [
-      "Developed and maintained full-stack web applications using React, Node.js, and related technologies.",
-      "Collaborated with designers and product managers to implement UI/UX designs and ensure a seamless user experience.",
-      "Participated in code reviews and contributed to improving code quality and maintainability.",
-      "Integrated front-end components with back-end APIs and data sources.",
-      "Implemented testing strategies to ensure the reliability and performance of web applications.",
+      "Built a tiered commodity distribution app with Next.js, TypeScript, and Node.js, improving efficiency and traceability by 20% for government clients.",
+      "Designed multilingual dashboards and UIs with TailwindCSS, shadcn/ui, and React Query, reducing communication delays by 30% and enabling real-time monitoring.",
+      "Implemented secure authentication with JWT and role-based access, integrating MongoDB to ensure data integrity and reduce unauthorized access.",
     ],
   },
   {
@@ -282,10 +276,9 @@ export const EXPERIENCE_DATA = [
       "Mentored junior developers and provided guidance on software engineering best practices. Assisted students in completing coding projects and preparing for technical interviews.",
     achievements: [
       "Mentored junior developers and provided guidance on software engineering best practices.",
-      "Assisted students in completing coding projects and preparing for technical interviews.",
+      "Assisted students in completing coding projects.",
       "Provided feedback on code quality and maintainability.",
       "Helped students improve their problem-solving skills and technical knowledge.",
-      "Contributed to the success of the Microverse program.",
     ],
   },
 ];
@@ -295,7 +288,7 @@ export const EDUCATION_DATA = [
     degree: "BSc in Software Engineering",
     institution: "Haramaya University",
     period: "2017 - 2022",
-    location: "Dire Dawa, Ethiopia",
+    location: "Haramaya, Ethiopia",
     description:
       "Graduated with distinction. Focused on software engineering principles, algorithms, and full-stack development. Relevant Courses: Data Structures & Algorithms, Web Development, Database Systems, Software Architecture, Artificial Intelligence, Distributed Systems, Object Oriented Programming ",
     highlights: [

@@ -35,6 +35,12 @@ import {
   Zap,
   Smartphone,
   Globe,
+  Bug,
+  Shield,
+  Wrench,
+  Hammer,
+  Target,
+  CheckSquare,
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
@@ -47,6 +53,7 @@ import ProjectsSection from './components/projects-section'
 import ExperienceSection from './components/experience-section'
 import TestimonialsSection from './components/testimonials-section'
 import ContactSection from './components/contact-section'
+import Chatbot from './components/chatbot'
 // Remove: import { useForm } from '@formspree/react'
 
 // Custom hooks
@@ -506,7 +513,7 @@ export default function Portfolio() {
   const statsData = useMemo(() => [
     { icon: Award, label: CORE_CONTENT.hero.stats.projectsCompleted, value: projectsCompleted.count, ref: projectsCompleted.ref },
     { icon: Users, label: CORE_CONTENT.hero.stats.happyClients, value: clientsSatisfied.count, ref: clientsSatisfied.ref },
-    { icon: Coffee, label: "Bugs Squashed", value: bugsSquashed.count, ref: bugsSquashed.ref },
+    { icon: Wrench, label: "Bugs Squashed", value: bugsSquashed.count, ref: bugsSquashed.ref },
     { icon: Star, label: CORE_CONTENT.hero.stats.yearsExperience, value: yearsExperience.count, ref: yearsExperience.ref },
   ], [projectsCompleted.count, clientsSatisfied.count, bugsSquashed.count, yearsExperience.count, projectsCompleted.ref, clientsSatisfied.ref, bugsSquashed.ref, yearsExperience.ref])
 
@@ -670,6 +677,9 @@ export default function Portfolio() {
           </div>
         </div>
       </footer>
+
+      {/* Chatbot */}
+      <Chatbot />
     </div>
   )
 }
