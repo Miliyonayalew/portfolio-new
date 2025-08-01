@@ -59,15 +59,15 @@ const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                 {lazyData.TESTIMONIALS_DATA.map((testimonial: any, index: number) => (
                   <div 
                     key={`testimonial-${index}`} 
-                    className="w-80 flex-shrink-0 px-4"
+                    className="w-96 flex-shrink-0 px-4"
                   >
-                    <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group h-full cursor-pointer">
-                      <CardContent className="p-6 text-center">
-                        <Quote className="h-6 w-6 text-primary mx-auto mb-3 opacity-50 group-hover:scale-105 group-hover:opacity-75 transition-all duration-300" />
-                        <blockquote className="text-sm text-muted-foreground leading-relaxed mb-4 italic group-hover:text-foreground transition-colors duration-300 line-clamp-4">
+                    <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer h-[300px]">
+                      <CardContent className="p-6 text-center h-full flex flex-col">
+                        <Quote className="h-6 w-6 text-primary mx-auto mb-3 opacity-50 group-hover:scale-105 group-hover:opacity-75 transition-all duration-300 flex-shrink-0" />
+                        <blockquote className="text-sm text-muted-foreground leading-relaxed mb-4 italic group-hover:text-foreground transition-colors duration-300 px-2 flex-1 flex items-center justify-center">
                           "{testimonial.content}"
                         </blockquote>
-                        <div className="text-center space-y-1">
+                        <div className="text-center space-y-1 mt-auto flex-shrink-0">
                           <div className="font-semibold text-foreground group-hover:text-primary transition-colors duration-300 text-sm">
                             {testimonial.name}
                           </div>
